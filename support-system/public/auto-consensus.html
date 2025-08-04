@@ -3,13 +3,11 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Consensus Decisions</title>
+    <title>Consensus Review</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="assets/style.css" />
     <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         .card.included {
             background-color: #d4edda;
@@ -34,7 +32,6 @@
 </head>
 
 <body class="bg-light">
-
     <!-- Sidebar Offcanvas -->
     <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="sidebar" aria-labelledby="sidebarLabel">
         <div class="offcanvas-header">
@@ -78,23 +75,16 @@
         </div>
     </nav>
 
-
     <div class="container py-5">
         <div class="row justify-content-center">
             <div class="col-lg-12 bg-white p-4 rounded shadow-sm">
-                <h2 class="mb-4 text-center">Consensus Decisions</h2>
+                <h2 class="mb-4 text-center">Consensus Review</h2>
 
-
-
-                <!-- Inclusion / Exclusion Criteria Info -->
-                <div id="criteria-section" class="mb-4">
-                    <h4>Inclusion / Exclusion Criteria</h4>
-                    <pre id="criteria-text" class="bg-light p-3 rounded border" style="white-space: pre-wrap;"></pre>
-                </div>
-
+                <!-- Confidence Settings -->
                 <div class="card mb-4 p-3">
                     <h4 class="card-title mb-3">Confidence Level Settings</h4>
                     <form id="confidence-form" class="row row-cols-1 row-cols-md-2 g-3">
+
                         <div class="col">
                             <h5>Inclusion Criteria</h5>
                             <div class="mb-2">
@@ -111,6 +101,7 @@
                             </div>
                             <div id="inclusion-fields"></div>
                         </div>
+
                         <div class="col">
                             <h5>Exclusion Criteria</h5>
                             <div class="mb-2">
@@ -127,6 +118,7 @@
                             </div>
                             <div id="exclusion-fields"></div>
                         </div>
+
                     </form>
                 </div>
 
@@ -137,8 +129,33 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
         let excludedStudies = [];
+
+        function calculateConsensus(first, second, third) {
+            const values = [first, second, third].filter(v => v !== -1);
+            if (values.length === 0) return -1;
+            if (values.length === 1) return values[0];
+            if (values.length === 2) return Math.max(...values);
+            if (values[0] === values[1]) return values[0];
+            if (values[0] === values[2]) return values[0];
+            if (values[1] === values[2]) return values[1];
+            return values.sort((a, b) => a - b)[1];
+        }
+
+        function computeConsensusValues(study) {
+            const result = {};
+            const criteria = Object.keys(study.firstModelDecision || {});
+            for (const key of criteria) {
+                const first = study.firstModelDecision[key];
+                const second = study.secondModelOpinion?.[key];
+                const third = study.thirdModelOpinion?.[key];
+                result[key] = calculateConsensus(first, second, third);
+            }
+            return result;
+        }
 
         function getConfidenceConfig() {
             const config = {};
@@ -149,52 +166,14 @@
         }
 
         function getMatchMode() {
-            return {
-                inclusionMode: document.querySelector('input[name="inclusion-mode"]:checked')?.value || 'all',
-                exclusionMode: document.querySelector('input[name="exclusion-mode"]:checked')?.value || 'all'
-            };
+            const inclusionMode = document.querySelector('input[name="inclusion-mode"]:checked')?.value || 'all';
+            const exclusionMode = document.querySelector('input[name="exclusion-mode"]:checked')?.value || 'all';
+            return { inclusionMode, exclusionMode };
         }
-
-        function calculateConsensus(first, second, participant) {
-            const values = [first, second, participant];
-            const filtered = values.filter(v => v !== -1);
-
-            // Duas notas iguais
-            if (filtered.length >= 2) {
-                if (filtered[0] === filtered[1]) return filtered[0];
-                if (filtered[0] === filtered[2]) return filtered[0];
-                if (filtered[1] === filtered[2]) return filtered[1];
-            }
-
-            // Se há -1, adota a mais otimista
-            if (values.includes(-1)) {
-                return Math.max(...filtered);
-            }
-
-            // Todas diferentes, adota participantOpinion
-            return participant;
-        }
-
-        function computeConsensusValues(study) {
-            const consensus = {};
-            const allCriteria = new Set([
-                ...Object.keys(study.firstModelDecision || {}),
-                ...Object.keys(study.secondModelOpinion || {}),
-                ...Object.keys(study.participantOpinion || {})
-            ]);
-
-            allCriteria.forEach(key => {
-                const f = study.firstModelDecision?.[key] ?? -1;
-                const s = study.secondModelOpinion?.[key] ?? -1;
-                const p = study.participantOpinion?.[key] ?? -1;
-                consensus[key] = calculateConsensus(f, s, p);
-            });
-
-            return consensus;
-        }
-
 
         function passesCriteria(output, config) {
+
+            
             const { inclusionMode, exclusionMode } = getMatchMode();
             const inclusionCriteria = Object.keys(config).filter(k => k.startsWith('IC'));
             const exclusionCriteria = Object.keys(config).filter(k => k.startsWith('EC'));
@@ -204,10 +183,15 @@
             if (inclusionCriteria.length === 0) {
                 inclusionPass = true;
             } else if (inclusionMode === 'all') {
+
                 inclusionPass = inclusionCriteria.every(c => output[c] !== undefined && output[c] >= config[c]);
+
             } else if (inclusionMode === 'one') {
                 inclusionPass = inclusionCriteria.some(c => output[c] !== undefined && output[c] >= config[c]);
+
             }
+
+            
 
             // Exclusão
             let exclusionPass = false;
@@ -215,13 +199,15 @@
                 exclusionPass = false;
             } else if (exclusionMode === 'all') {
                 exclusionPass = exclusionCriteria.every(c => output[c] !== undefined && output[c] >= config[c]);
+                console.log(exclusionPass)
             } else if (exclusionMode === 'one') {
                 exclusionPass = exclusionCriteria.some(c => output[c] !== undefined && output[c] >= config[c]);
             }
 
             // Estudo será incluído apenas se passar na inclusão e NÃO passar na exclusão
-            return inclusionPass && !exclusionPass;
+            return inclusionPass && exclusionPass;
         }
+
 
         function generateDynamicCriteriaForm(allCriteriaKeys) {
             const inclusionContainer = document.getElementById('inclusion-fields');
@@ -247,9 +233,12 @@
                 container.appendChild(input);
             });
 
-            document.querySelectorAll('#confidence-form input[type=number], input[name="inclusion-mode"], input[name="exclusion-mode"]').forEach(el => {
-                el.addEventListener('input', renderStudies);
-                el.addEventListener('change', renderStudies);
+            document.querySelectorAll('#confidence-form input[type=number]').forEach(input => {
+                input.addEventListener('input', renderStudies);
+            });
+
+            document.querySelectorAll('input[name="inclusion-mode"], input[name="exclusion-mode"]').forEach(r => {
+                r.addEventListener('change', renderStudies);
             });
         }
 
@@ -258,134 +247,63 @@
             const container = document.getElementById("cardsContainer");
             container.innerHTML = "";
 
+            if (!excludedStudies.length) {
+                alert("No studies found.");
+                return;
+            }
+
             let included = 0, excluded = 0;
 
             excludedStudies.forEach((study, idx) => {
                 const consensus = computeConsensusValues(study);
-                // Só atribui decisão automática se não tiver decisão manual ainda
-                if (study.userDecision !== "Include" && study.userDecision !== "Exclude") {
-                    study.userDecision = passesCriteria(consensus, config) ? "Include" : "Exclude";
-                }
-                if (study.userDecision === "Include") included++; else excluded++;
+                const decision = passesCriteria(consensus, config);
+                if (decision) included++;
+                else excluded++;
 
-                const allCriteria = Object.keys(consensus);
+                const tableRows = Object.keys(study.firstModelDecision || {}).map(criteria => `
+          <tr>
+            <td>${criteria}</td>
+            <td>${study.firstModelDecision[criteria]}</td>
+            <td>${study.secondModelOpinion?.[criteria] ?? '—'}</td>
+            <td>${study.thirdModelOpinion?.[criteria] ?? '—'}</td>
+            <td><strong>${consensus[criteria]}</strong></td>
+          </tr>
+        `).join('');
 
                 const card = document.createElement("div");
-                card.className = `card mb-4 p-3 ${study.userDecision === "Include" ? 'included' : 'excluded'}`;
+                card.className = `card mb-4 p-3 ${decision ? 'included' : 'excluded'}`;
                 card.setAttribute("data-idx", idx);
                 card.innerHTML = `
           <h5 class="card-title">${study.Title}</h5>
           <p><strong>Abstract:</strong> ${study.Abstract}</p>
           <p><strong>Keywords:</strong> ${study.Keywords || "—"}</p>
-          <p><strong>Publication Venue:</strong> ${study["Publication venue"] || "—"}</p>
-          <p><strong>Publication date:</strong> ${study["Publication date"] || "—"}</p>
-          <h6 class="mt-3">Decision Comparison</h6>
+          <h6 class="mt-3">Model Decisions</h6>
           <table class="table table-bordered">
             <thead>
-              <tr>
-                <th>Criteria</th>
-                <th>First Model</th>
-                <th>Second Model</th>
-                <th>Participant</th>
-                <th>Consensus</th>
-              </tr>
+              <tr><th>Criteria</th><th>First Model</th><th>Second Model</th><th>Third Model</th><th>Consensus</th></tr>
             </thead>
-            <tbody>
-              ${allCriteria.map(criteria => `
-                <tr>
-                  <td>${criteria}</td>
-                  <td>${study.firstModelDecision?.[criteria] ?? "—"}</td>
-                  <td>${study.secondModelOpinion?.[criteria] ?? "—"}</td>
-                  <td>${study.participantOpinion?.[criteria] ?? "—"}</td>
-                  <td><strong>${consensus[criteria]}</strong></td>
-                </tr>
-              `).join("")}
-            </tbody>
+            <tbody>${tableRows}</tbody>
           </table>
-
-          <div class="mt-3">
-            <label><strong>Your decision:</strong></label>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input user-decision-radio" type="radio" 
-                     name="userDecision-${idx}" id="userDecisionInclude-${idx}" value="Include"
-                     ${study.userDecision === "Include" ? "checked" : ""}>
-              <label class="form-check-label" for="userDecisionInclude-${idx}">Included</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input user-decision-radio" type="radio" 
-                     name="userDecision-${idx}" id="userDecisionExclude-${idx}" value="Exclude"
-                     ${study.userDecision === "Exclude" ? "checked" : ""}>
-              <label class="form-check-label" for="userDecisionExclude-${idx}">Excluded</label>
-            </div>
-          </div>
         `;
                 container.appendChild(card);
             });
 
-            // Escuta mudanças nos radio buttons para atualizar userDecision e cores
-            document.querySelectorAll('.user-decision-radio').forEach(input => {
-                input.addEventListener('change', (event) => {
-                    const inputEl = event.target;
-                    const idx = parseInt(inputEl.name.split('-')[1], 10);
-                    const study = excludedStudies[idx];
-
-                    if (!study) return;
-
-                    study.userDecision = inputEl.value; // "Include" ou "Exclude"
-
-                    const card = document.querySelector(`.card[data-idx="${idx}"]`);
-                    if (card) {
-                        card.classList.toggle('included', study.userDecision === "Include");
-                        card.classList.toggle('excluded', study.userDecision === "Exclude");
-                    }
-
-                    // Atualiza o resumo
-                    const includedCount = excludedStudies.filter(s => s.userDecision === "Include").length;
-                    const excludedCount = excludedStudies.filter(s => s.userDecision === "Exclude").length;
-                    document.getElementById("summary").innerText = `Included: ${includedCount} | Excluded: ${excludedCount}`;
-                });
-            });
-
-            // Atualiza o resumo final
-            document.getElementById("summary").innerText = `Included: ${included} | Excluded: ${excluded}`;
+            document.getElementById('summary').innerText = `Included: ${included} | Excluded: ${excluded}`;
         }
-
-
-        window.addEventListener("DOMContentLoaded", async () => {
-            // 1) Carregar estudos do localStorage
-            const raw = localStorage.getItem("excludedStudies");
-            if (!raw) {
-                alert("No studies found in localStorage.");
-                return;
-            }
-            excludedStudies = JSON.parse(raw);
-
-            // 2) Buscar critérios do endpoint para exibir no topo
-            const currentRun = JSON.parse(localStorage.getItem("currentRun") || "{}");
-            const theme = currentRun.theme || "1";
-
-            try {
-                const res = await fetch(`http://localhost:3000/get-dataset/${theme}`);
-                const dataset = await res.json();
-
-                const criteriaSection = document.getElementById("criteria-text");
-                criteriaSection.textContent = dataset.secondary_study["Inclusion / Exclusion criteria"] || "No criteria found.";
-            } catch (err) {
-                alert("Erro ao carregar os critérios: " + err.message);
-            }
-
-            // 3) Gerar formulário e renderizar estudos
-            const sample = excludedStudies[0]?.participantOpinion || {};
-            generateDynamicCriteriaForm(Object.keys(sample));
-            renderStudies();
-        });
 
         document.getElementById('download-btn').addEventListener('click', () => {
             const config = getConfidenceConfig();
             const included = [], excluded = [];
 
             excludedStudies.forEach(study => {
-                (study.userDecision === "Include" ? included : excluded).push(study);
+                const consensus = computeConsensusValues(study);
+                if (passesCriteria(consensus, config)) {
+                    study.userDecision = "Include";
+                    included.push(study);
+                } else {
+                    study.userDecision = "Exclude";
+                    excluded.push(study);
+                }
             });
 
             const zip = new JSZip();
@@ -407,6 +325,19 @@
             });
         });
 
+        window.addEventListener("DOMContentLoaded", () => {
+            const raw = localStorage.getItem("excludedStudies");
+            if (!raw) {
+                alert("No studies found in localStorage.");
+                return;
+            }
+
+            excludedStudies = JSON.parse(raw);
+            const firstDecision = excludedStudies[0]?.firstModelDecision || {};
+            const allCriteria = Object.keys(firstDecision);
+            generateDynamicCriteriaForm(allCriteria);
+            renderStudies();
+        });
     </script>
 </body>
 

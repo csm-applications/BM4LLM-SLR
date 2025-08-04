@@ -52,7 +52,6 @@
     </div>
   </nav>
 
-
   <div class="container py-5">
     <div class="row justify-content-center">
       <div class="col-lg-12 bg-white p-4 rounded shadow-sm">
@@ -69,6 +68,7 @@
   <script>
     const datasetId = localStorage.getItem('runId');
     const email = localStorage.getItem('participantEmail');
+    const model2Name = localStorage.getItem('model2') || "second model";
     let excludedStudies = [];
 
     const templates = {
@@ -106,49 +106,68 @@ Return the result in CSV format with columns: Criteria, Rate`.trim()
       excludedStudies = JSON.parse(raw);
       const run = await loadRunData();
       const promptType = run?.prompt || 'felizardo';
-      const criteria = run?.criteria || 'Insert your inclusion/exclusion criteria here';
+      const criteriaText = run?.criteria || 'Insert your inclusion/exclusion criteria here';
+      const model2Name = localStorage.getItem("model2") || "second model";
+
+      // Gerar esqueleto CSV para decisão do usuário
+      function generateDecisionSkeleton(criteriaText) {
+        const lines = criteriaText.split("\n").map(line => line.trim()).filter(line => line);
+        const skeleton = ["Criteria, Rate"];
+        lines.forEach(line => {
+          const match = line.match(/^(IC\d+|EC\d+)/i);
+          if (match) skeleton.push(`${match[1]}, ?`);
+        });
+        return skeleton.join("\n");
+      }
+
+      const decisionSkeleton = generateDecisionSkeleton(criteriaText);
 
       const container = document.getElementById("cardsContainer");
       container.innerHTML = "";
 
       excludedStudies.forEach((study, idx) => {
-        const prompt = generatePrompt(promptType, study, criteria);
+        const prompt = generatePrompt(promptType, study, criteriaText);
         const card = document.createElement("div");
         card.className = "card mb-4";
         card.setAttribute("data-idx", idx);
         card.innerHTML = `
-          <div class="card-body">
-            <h5 class="card-title">${study.Title}</h5>
-            <p><strong>Abstract:</strong> ${study.Abstract}</p>
-            <p><strong>Keywords:</strong> ${study.Keywords || "—"}</p>
+      <div class="card-body">
+        <h5 class="card-title">${study.Title}</h5>
+        <p><strong>Abstract:</strong> ${study.Abstract}</p>
+        <p><strong>Keywords:</strong> ${study.Keywords || "—"}</p>
 
-            <div class="accordion mb-3" id="promptAccordion${idx}">
-              <div class="accordion-item">
-                <h2 class="accordion-header">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#collapsePrompt${idx}" aria-expanded="false">
-                    Show Prompt
-                  </button>
-                </h2>
-                <div id="collapsePrompt${idx}" class="accordion-collapse collapse">
-                  <div class="accordion-body">
-                    <pre class="bg-light p-3 rounded">${prompt}</pre>
-                  </div>
-                </div>
+        <div class="accordion mb-3" id="promptAccordion${idx}">
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapsePrompt${idx}" aria-expanded="false">
+                Show Prompt
+              </button>
+            </h2>
+            <div id="collapsePrompt${idx}" class="accordion-collapse collapse">
+              <div class="accordion-body">
+                <pre class="bg-light p-3 rounded" id="promptText${idx}">${prompt}</pre>
+                <button class="btn btn-outline-primary btn-sm mt-2 copy-btn" data-idx="${idx}">Copy</button>
               </div>
             </div>
+          </div>
+        </div>
 
-            <div class="mb-3">
-              <label class="form-label">Paste the second model response here:</label>
-              <textarea class="form-control output-box" rows="4" placeholder="Paste the result here..."></textarea>
-            </div>
-          </div>`;
+        <div class="mb-3">
+          <label class="form-label">Paste the ${model2Name} response here:</label>
+          <textarea class="form-control output-box" rows="4" placeholder="Paste the result here..."></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Your decision:</label>
+          <textarea class="form-control decision-box" rows="6">${decisionSkeleton}</textarea>
+        </div>
+      </div>`;
         container.appendChild(card);
       });
 
       bindSaveEvents();
     }
-
     function parseCSVToJSON(csvText) {
       const lines = csvText.trim().split("\n");
       const result = {};
@@ -166,15 +185,22 @@ Return the result in CSV format with columns: Criteria, Rate`.trim()
 
         for (let i = 0; i < cards.length; i++) {
           const card = cards[i];
-          const output = card.querySelector(".output-box").value.trim();
-          if (!output) {
-            alert(`Missing output for study ${i + 1}.`);
+
+          const modelOutput = card.querySelector(".output-box").value.trim();
+          const userDecision = card.querySelector(".decision-box").value.trim();
+
+          if (!modelOutput || !userDecision) {
+            alert(`Missing response or decision for study ${i + 1}.`);
             return;
           }
 
           try {
-            const parsed = parseCSVToJSON(output);
-            excludedStudies[i].secondmodelopinion = parsed;
+            const parsedModel = parseCSVToJSON(modelOutput);
+            const parsedUser = parseCSVToJSON(userDecision);
+
+            excludedStudies[i].secondModelOpinion = parsedModel;
+            excludedStudies[i].participantOpinion = parsedUser;
+
           } catch (e) {
             alert(`Error parsing CSV for study ${i + 1}: ${e.message}`);
             return;
@@ -186,6 +212,20 @@ Return the result in CSV format with columns: Criteria, Rate`.trim()
         console.log(excludedStudies);
       });
     }
+
+
+    document.addEventListener("click", function (e) {
+      if (e.target && e.target.classList.contains("copy-btn")) {
+        const idx = e.target.getAttribute("data-idx");
+        const text = document.getElementById(`promptText${idx}`).innerText;
+        navigator.clipboard.writeText(text).then(() => {
+          e.target.innerText = "Copied!";
+          setTimeout(() => e.target.innerText = "Copy", 1500);
+        }).catch(() => {
+          alert("Failed to copy prompt.");
+        });
+      }
+    });
 
     window.addEventListener("DOMContentLoaded", loadAndRender);
   </script>
