@@ -55,7 +55,7 @@
         <li class="nav-item"><a class="nav-link text-white" href="preferences.html">Run Setup</a></li>
 
         <li class="nav-item text-white-50 fw-bold mt-4">Pre-Selection Phase</li>
-        <li class="nav-item"><a class="nav-link text-white" href="review.html">LLM-Assisted Review</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="experimentation.html">LLM-Assisted Review</a></li>
 
         <li class="nav-item text-white-50 fw-bold mt-4">Looping Phase</li>
         <li class="nav-item"><a class="nav-link text-white" href="hil-confidence.html">Start Looping</a></li>
@@ -163,41 +163,42 @@
 
 
     function passesCriteria(output, config) {
-
-
       const { inclusionMode, exclusionMode } = getMatchMode();
       const inclusionCriteria = Object.keys(config).filter(k => k.startsWith('IC'));
       const exclusionCriteria = Object.keys(config).filter(k => k.startsWith('EC'));
 
+      // Filtra critérios de inclusão que não têm valor -1
+      const validInclusionCriteria = inclusionCriteria.filter(c => output[c] !== -1 && output[c] !== undefined);
+      // Filtra critérios de exclusão que não têm valor -1
+      const validExclusionCriteria = exclusionCriteria.filter(c => output[c] !== -1 && output[c] !== undefined);
+
       // Inclusão
       let inclusionPass = false;
-      if (inclusionCriteria.length === 0) {
-        inclusionPass = true;
+      if (validInclusionCriteria.length === 0) {
+        inclusionPass = true; // Sem critérios válidos de inclusão, passa automaticamente
       } else if (inclusionMode === 'all') {
-
-        inclusionPass = inclusionCriteria.every(c => output[c] !== undefined && output[c] >= config[c]);
-
+        inclusionPass = validInclusionCriteria.every(c => output[c] >= config[c]);
       } else if (inclusionMode === 'one') {
-        inclusionPass = inclusionCriteria.some(c => output[c] !== undefined && output[c] >= config[c]);
-
+        inclusionPass = validInclusionCriteria.some(c => output[c] >= config[c]);
       }
-
-
 
       // Exclusão
       let exclusionPass = false;
-      if (exclusionCriteria.length === 0) {
-        exclusionPass = false;
+      if (validExclusionCriteria.length === 0) {
+        exclusionPass = false; // Sem critérios válidos de exclusão, não passa exclusão
       } else if (exclusionMode === 'all') {
-        exclusionPass = exclusionCriteria.every(c => output[c] !== undefined && output[c] >= config[c]);
-        console.log(exclusionPass)
+        exclusionPass = validExclusionCriteria.every(c => output[c] >= config[c]);
       } else if (exclusionMode === 'one') {
-        exclusionPass = exclusionCriteria.some(c => output[c] !== undefined && output[c] >= config[c]);
+        exclusionPass = validExclusionCriteria.some(c => output[c] >= config[c]);
       }
 
       // Estudo será incluído apenas se passar na inclusão e NÃO passar na exclusão
       return inclusionPass && exclusionPass;
     }
+
+
+
+
     function updateDisplay() {
       const config = getConfidenceConfig();
       const container = document.getElementById('studies');
@@ -216,6 +217,8 @@
           <p><strong>Authors:</strong> ${study.Authors}</p>
           <p><strong>Abstract:</strong> ${study.Abstract}</p>
           <p><strong>Keywords:</strong> ${study.Keywords}</p>
+          <p><strong>Publication Venue:</strong> ${study["Publication venue"]}</p>
+          <p><strong>Publication Data:</strong> ${study["Publication data"]}</p>
           <p><strong>Model Decision:</strong> ${JSON.stringify(study.firstModelDecision)}</p>
         `;
         container.appendChild(card);

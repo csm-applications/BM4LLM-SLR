@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Combined Study Decisions</title>
@@ -11,6 +12,7 @@
       max-height: 70vh;
       overflow-y: auto;
     }
+
     td.abstract-cell {
       max-width: 350px;
       white-space: nowrap;
@@ -19,12 +21,14 @@
     }
   </style>
 </head>
+
 <body class="bg-light" style="height: 100vh;">
 
   <!-- Sidebar Offcanvas -->
   <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="sidebar" aria-labelledby="sidebarLabel">
     <div class="offcanvas-header">
-      <h5 class="offcanvas-title" id="sidebarLabel"><a style="text-decoration: none; color: white;" href="login-management.html"> BM4LLM-SLR </a></h5>
+      <h5 class="offcanvas-title" id="sidebarLabel"><a style="text-decoration: none; color: white;"
+          href="login-management.html"> BM4LLM-SLR </a></h5>
       <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
@@ -36,7 +40,7 @@
         <li class="nav-item"><a class="nav-link text-white" href="questionnaire.html">Participant Profile</a></li>
         <li class="nav-item"><a class="nav-link text-white" href="preferences.html">Run Setup</a></li>
         <li class="nav-item text-white-50 fw-bold mt-4">Pre-Selection Phase</li>
-        <li class="nav-item"><a class="nav-link text-white" href="review.html">LLM-Assisted Review</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="experimentation.html">LLM-Assisted Review</a></li>
         <li class="nav-item text-white-50 fw-bold mt-4">Looping Phase</li>
         <li class="nav-item"><a class="nav-link text-white" href="hil-confidence.html">Start Looping</a></li>
         <li class="nav-item text-white-50 fw-bold mt-4">Results</li>
@@ -48,10 +52,12 @@
   <!-- Top Navbar -->
   <nav class="navbar bg-dark text-white">
     <div class="container-fluid">
-      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar"
+        aria-controls="sidebar">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <span class="navbar-brand mb-0 h1 text-white"><a style="text-decoration: none; color: white;" href="login-management.html"> BM4LLM-SLR </a></span>
+      <span class="navbar-brand mb-0 h1 text-white"><a style="text-decoration: none; color: white;"
+          href="login-management.html"> BM4LLM-SLR </a></span>
     </div>
   </nav>
 
@@ -71,7 +77,7 @@
           <input type="file" class="form-control" id="outputAssetsZip" accept=".zip" />
         </div>
         <div class="col-md-6>
-          <label for="consensusResultsZip" class="form-label">consensus-results.zip</label>
+          <label for=" consensusResultsZip" class="form-label">consensus-results.zip</label>
           <input type="file" class="form-control" id="consensusResultsZip" accept=".zip" />
         </div>
         <div class="col-md-4">
@@ -279,7 +285,13 @@
           const abstract = study.Abstract || "—";
           const keywords = study.Keywords || "—";
           const gt = study["Ground truth"] || "—";
-          const expDec = decisionMap.get(normalizeTitle(title)) ?? "Unknown";
+          const rawDecision = decisionMap.get(normalizeTitle(title)) ?? "unknown";
+          const displayDecisionMap = {
+            "included": "Include",
+            "excluded": "Exclude",
+            "unknown": "Unknown"
+          };
+          const expDec = displayDecisionMap[rawDecision.toLowerCase()] ?? "Unknown";
 
           const tr = document.createElement("tr");
           tr.innerHTML = `
@@ -319,4 +331,5 @@
     });
   </script>
 </body>
+
 </html>

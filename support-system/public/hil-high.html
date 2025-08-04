@@ -29,7 +29,7 @@
         <li class="nav-item"><a class="nav-link text-white" href="preferences.html">Run Setup</a></li>
 
         <li class="nav-item text-white-50 fw-bold mt-4">Pre-Selection Phase</li>
-        <li class="nav-item"><a class="nav-link text-white" href="review.html">LLM-Assisted Review</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="experimentation.html">LLM-Assisted Review</a></li>
 
         <li class="nav-item text-white-50 fw-bold mt-4">Looping Phase</li>
         <li class="nav-item"><a class="nav-link text-white" href="hil-confidence.html">Start Looping</a></li>
@@ -135,6 +135,8 @@ Return the result in CSV format with columns: Criteria, Rate`.trim()
         <h5 class="card-title">${study.Title}</h5>
         <p><strong>Abstract:</strong> ${study.Abstract}</p>
         <p><strong>Keywords:</strong> ${study.Keywords || "—"}</p>
+        <p><strong>Publication Venue:</strong> ${study["Publication venue"] || "—"}</p>
+        <p><strong>Publication data:</strong> ${study["Publication date"] || "—"}</p>
 
         <div class="accordion mb-3" id="promptAccordion${idx}">
           <div class="accordion-item">

@@ -28,7 +28,7 @@
         <li class="nav-item"><a class="nav-link text-white" href="preferences.html">Run Setup</a></li>
 
         <li class="nav-item text-white-50 fw-bold mt-4">Pre-Selection Phase</li>
-        <li class="nav-item"><a class="nav-link text-white" href="review.html">LLM-Assisted Review</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="experimentation.html">LLM-Assisted Review</a></li>
 
         <li class="nav-item text-white-50 fw-bold mt-4">Looping Phase</li>
         <li class="nav-item"><a class="nav-link text-white" href="hil-confidence.html">Start Looping</a></li>
@@ -73,7 +73,8 @@ Abstract: ${abstract}
 Keywords: ${keywords}
 Using a 1-7 Likert scale (1 - Strongly disagree, ..., 7 - Strongly agree), rate your agreement with the following criteria (only number). Remember if it is not possible to evaluate based on the provided information give the score -1.
 ${localStorage.getItem("fullCriteria")}
-Return the result in CSV format with columns: Criteria, Rate`.trim()
+Return the result in CSV format with columns: Criteria, Rate\n
+Do not give me the file, give me in chat in csv format`.trim()
     };
 
     async function loadRunData() {
