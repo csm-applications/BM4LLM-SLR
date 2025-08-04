@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Step 3 – LLM Experimentation</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+
+<body class="bg-light" style="height: 100vh;">
+
+  <!-- Sidebar Offcanvas -->
+  <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="sidebar" aria-labelledby="sidebarLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="sidebarLabel"><a style="text-decoration: none; color: white;"
+          href="login-management.html"> BM4LLM-SLR </a></h5>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <ul class="nav flex-column">
+        <li class="nav-item text-white-50 fw-bold mt-2">Welcome</li>
+        <li class="nav-item"><a class="nav-link text-white" href="index.html">Introduction</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="instructions.html">Instructions</a></li>
+        <li class="nav-item text-white-50 fw-bold mt-4">Configuration</li>
+        <li class="nav-item"><a class="nav-link text-white" href="questionnaire.html">Participant Profile</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="preferences.html">Run Setup</a></li>
+        <li class="nav-item text-white-50 fw-bold mt-4">Pre-Selection Phase</li>
+        <li class="nav-item"><a class="nav-link text-white" href="experimentation.html">LLM-Assisted Review</a></li>
+        <li class="nav-item text-white-50 fw-bold mt-4">Looping Phase</li>
+        <li class="nav-item"><a class="nav-link text-white" href="hil-confidence.html">Start Looping</a></li>
+        <li class="nav-item text-white-50 fw-bold mt-4">Results</li>
+        <li class="nav-item"><a class="nav-link text-white" href="#">Final Report</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Top Navbar -->
+  <nav class="navbar bg-dark text-white">
+    <div class="container-fluid">
+      <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar"
+        aria-controls="sidebar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <span class="navbar-brand mb-0 h1 text-white"><a style="text-decoration: none; color: white;"
+          href="login-management.html"> BM4LLM-SLR </a></span>
+    </div>
+  </nav>
+
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-12 bg-white p-4 rounded shadow-sm">
+        <h2 class="mb-4 text-center">Run Execution</h2>
+        <div id="cardsContainer"></div>
+        <button class="btn btn-success save-btn mt-4">Save Responses</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+
+
+    const currentRun = JSON.parse(localStorage.getItem('currentRun'));
+    console.log(localStorage);
+    const urlParams = new URLSearchParams(window.location.search);
+    console.log(currentRun);
+    const datasetId = currentRun.theme
+    const template = urlParams.get('template');
+    const email = localStorage.getItem('participantEmail');
+    let selectedStudiesData = [];
+
+    const templates = {
+      felizardo: (title, abstract, keywords, publication, date, criteria) => `
+Assume you are a software engineering
+researcher conducting a systematic literature review
+(SLR). Consider the title, abstract, keywords, publication, and date of a
+primary study.
+
+Title: ${title}
+Abstract: ${abstract}
+Keywords: ${keywords}
+Publication: ${publication}
+Date: ${date}
+
+Using a 1-7 Likert scale (1 - Strongly disagree, ..., 7 - Strongly agree), rate your agreement with the following criteria (only number). Remember if it is not possible to evaluate based on the provided information give the score -1.
+
+${criteria}
+
+give me the result in CSV with the following columns: Criteria, Rate
+`.trim(),
+
+      huotala: (title, abstract, keywords, publication, date, criteriaText, instructions = '') => `
+Role: You are a software engineering researcher conducting a systematic literature review (SLR).
+
+Task: Evaluate a primary study using **three types of assessments**, applied to both:
+a) The **overall** relevance of the primary study
+b) Each individual **inclusion/exclusion criterion**
+
+**Likert scale**
+- **Value:** An integer from \`1\` to \`7\`
+- **Interpretation:** Degree of agreement with the criterion being met, or the relevance of the study
+
+### Inclusion and exclusion criteria:
+${criteriaText}
+
+### Additional instructions:
+${instructions}
+
+### Primary study:
+**Title:** 
+""" 
+${title}
+"""
+
+**Abstract:** 
+"""
+${abstract}
+"""
+
+**Keywords:** 
+"""
+${keywords}
+"""
+
+**Publication:** 
+"""
+${publication}
+"""
+
+**Date:** 
+"""
+${date}
+"""
+`.trim(),
+
+      thode: (title, abstract, keywords, publication, date, criteriaText) => `
+Perform the task to the best of your ability.
+
+User Prompt:
+Assume you are an expert professor in Software Engineering conducting a
+systematic literature review.
+
+Your task is to evaluate studies based on specific criteria:
+Inclusion Criteria (IC): Inclusion criteria from primary candidate study
+Exclusion Criteria (EC): Exclusion criteria from primary candidate study
+
+For scoring, use only 1 or 0: Assign a score of 1 for strong alignment with all
+inclusion criteria. Assign a score of 0 if any inclusion criteria are not satisfied or if
+any exclusion criteria are met.
+
+You’ll score studies based on their title, abstracts, keywords, publication venue and date.
+
+Title: ${title}
+Abstract: ${abstract}
+Keywords: ${keywords}
+Publication: ${publication}
+Date: ${date}
+
+For the response, use the following format: Response Format: Begin with ‘‘Score:
+X’’ followed by ‘‘Justification:’’ which explains why the study was considered
+relevant or not.
+`.trim()
+    };
+
+    async function loadDataset() {
+      const res = await fetch(`/get-dataset/${datasetId}`);
+      if (!res.ok) {
+        alert("Erro ao carregar o dataset.");
+        return;
+      }
+
+      const runId = localStorage.getItem("runId");
+      const runDataRes = await fetch(`/get-run/${runId}`);
+      if (!res.ok) {
+        alert("Erro ao carregar o dataset.");
+        return;
+      }
+      const runData = await runDataRes.json();
+
+      const data = await res.json();
+      const studies = data.primary_studies || [];
+      const selectedStudies = shuffleArray(studies).slice(0, 20);
+      selectedStudiesData = selectedStudies;
+
+      const container = document.getElementById('cardsContainer');
+      container.innerHTML = "";
+
+      console.log(runData)
+
+      selectedStudies.forEach((study, idx) => {
+        const prompt = generatePrompt(runData.prompt, study, data);
+        const card = document.createElement('div');
+        card.className = "card mb-4 w-100";
+        card.setAttribute("data-study", JSON.stringify(study));
+
+        card.innerHTML = `
+  <div class="card-body">
+    <h5 class="card-title">${study["Title"]}</h5>
+    <p><strong>Abstract:</strong> ${study["Abstract"]}</p>
+    <p><strong>Keywords:</strong> ${study["Keywords"] || '—'}</p>
+    <p><strong>Publication:</strong> ${study["Publication venue"] || '—'}</p>
+    <p><strong>Date:</strong> ${study["Publication date"] || '—'}</p>
+
+    <div class="accordion mb-3" id="promptAccordion${idx}">
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapsePrompt${idx}" aria-expanded="false" aria-controls="collapsePrompt${idx}">
+            Show Prompt
+          </button>
+        </h2>
+        <div id="collapsePrompt${idx}" class="accordion-collapse collapse" data-bs-parent="#promptAccordion${idx}">
+          <div class="accordion-body">
+            <pre id="promptText${idx}" class="bg-light p-3 rounded" style="white-space: pre-wrap;">${prompt}</pre>
+            <button class="btn btn-sm btn-primary mt-2 copy-btn" data-target="promptText${idx}">Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Paste the response of ${localStorage.getItem("model1") || "the model"} here:</label>
+      <textarea class="form-control output-box" rows="4" placeholder="Paste the result here..."></textarea>
+    </div>
+  </div>
+`;
+
+        container.appendChild(card);
+      });
+
+      bindSaveEvents();
+    }
+
+    function generatePrompt(type, study, data) {
+      const title = study["Title"];
+      const abstract = study["Abstract"];
+      const keywords = study["Keywords"];
+      const publication = study["Publication venue"] || "—";
+      const date = study["Publication date"] || "—";
+      const fullCriteria = data.secondary_study["Inclusion / Exclusion criteria"];
+      localStorage.setItem("fullCriteria", fullCriteria);
+      const instructions = data["Prompt instruction"] || "";
+      switch (type) {
+        case "felizardo":
+          return templates.felizardo(title, abstract, keywords, publication, date, fullCriteria);
+        case "huotala":
+          return templates.huotala(title, abstract, keywords, publication, date, fullCriteria, instructions);
+        case "thode":
+          return templates.thode(title, abstract, keywords, publication, date, fullCriteria);
+        default:
+          return "Prompt template not found.";
+      }
+    }
+
+
+
+    function parseCSVToJSON(csvText) {
+      const lines = csvText.trim().split("\n");
+      const result = {};
+      for (let i = 1; i < lines.length; i++) {
+        const [key, value] = lines[i].split(",").map(s => s.trim());
+        if (!key || isNaN(value)) {
+          throw new Error("Formato CSV inválido.");
+        }
+        result[key] = parseInt(value, 10);
+      }
+      return result;
+    }
+
+    function bindSaveEvents() {
+      document.querySelectorAll('.save-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const cards = document.querySelectorAll('.card');
+          const email = localStorage.getItem('participantEmail');
+
+          if (!email) {
+            alert("E-mail do participante não definido.");
+            return;
+          }
+
+          for (let i = 0; i < cards.length; i++) {
+            const card = cards[i];
+            const outputText = card.querySelector('.output-box').value.trim();
+            if (!outputText) {
+              alert(`Estudo ${i + 1}: falta colar a resposta do modelo.`);
+              return;
+            }
+
+            try {
+              const firstModelDecision = parseCSVToJSON(outputText);
+              selectedStudiesData[i].firstModelDecision = firstModelDecision;
+            } catch (e) {
+              alert(`Erro ao processar o CSV do estudo ${i + 1}: ${e.message}`);
+              return;
+            }
+          }
+
+
+          localStorage.setItem('experimentAnswers', JSON.stringify(selectedStudiesData));
+          window.location.href = 'review.html';
+        });
+      });
+    }
+
+    function shuffleArray(array) {
+      return array.map(a => [Math.random(), a])
+        .sort((a, b) => a[0] - b[0])
+        .map(a => a[1]);
+    }
+
+    loadDataset();
+
+
+    // Função para copiar texto para o clipboard
+    document.addEventListener('click', function (event) {
+      if (event.target.classList.contains('copy-btn')) {
+        const targetId = event.target.getAttribute('data-target');
+        const textToCopy = document.getElementById(targetId).innerText;
+
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          event.target.innerText = 'Copied!';
+          setTimeout(() => {
+            event.target.innerText = 'Copy';
+          }, 2000);
+        }).catch(() => {
+          alert('Failed to copy text.');
+        });
+      }
+    });
+
+  </script>
+</body>
+
+</html>

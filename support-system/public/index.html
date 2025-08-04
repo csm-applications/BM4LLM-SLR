@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LLMs to Support Studies Selection</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+
+<body class="bg-light" style="height: 100vh;">
+
+  <!-- Sidebar Offcanvas -->
+  <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="sidebar" aria-labelledby="sidebarLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="sidebarLabel"><a style="text-decoration: none; color: white;" href="login-management.html"> BM4LLM-SLR </a></h5>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <ul class="nav flex-column">
+
+        <li class="nav-item text-white-50 fw-bold mt-2">Welcome</li>
+        <li class="nav-item"><a class="nav-link text-white" href="index.html">Introduction</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="instructions.html">Instructions</a></li>
+
+        <li class="nav-item text-white-50 fw-bold mt-4">Configuration</li>
+        <li class="nav-item"><a class="nav-link text-white" href="questionnaire.html">Participant Profile</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="preferences.html">Run Setup</a></li>
+
+        <li class="nav-item text-white-50 fw-bold mt-4">Pre-Selection Phase</li>
+        <li class="nav-item"><a class="nav-link text-white" href="experimentation.html">LLM-Assisted Review</a></li>
+
+        <li class="nav-item text-white-50 fw-bold mt-4">Looping Phase</li>
+        <li class="nav-item"><a class="nav-link text-white" href="hil-confidence.html">Start Looping</a></li>
+
+        <li class="nav-item text-white-50 fw-bold mt-4">Results</li>
+        <li class="nav-item"><a class="nav-link text-white" href="#">Final Report</a></li>
+
+      </ul>
+    </div>
+  </div>
+
+
+  <!-- Top Navbar (for toggle button) -->
+  <nav class="navbar bg-dark text-white">
+    <div class="container-fluid">
+      <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar"
+        aria-controls="sidebar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <span class="navbar-brand mb-0 h1 text-white"><a style="text-decoration: none; color: white;" href="login-management.html"> BM4LLM-SLR </a></span>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container text-center mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-10 col-lg-8 p-5 bg-white rounded shadow-sm">
+        <h2 class="mb-4">LLMs to Support Studies Selection in Systematic Literature Reviews</h2>
+
+        <p class="text-start">
+          You are about to participate in a voluntary experiment conducted by the lead researcher, <strong>Vinicius dos
+            Santos</strong> that is investigating the usage of Large Language Models (LLM) in SLR process. More
+          especifically, in the primary studies selection task.
+          <br><br>
+          <b>Important</b>: This session will be recorded for transcription and artifact improvement purposes.
+          Transcriptions may be published for scientific analysis, but <strong>audio recordings will not be
+            shared</strong>. By participating, you agree to share your oppinions and impressions recorded textually.
+          <br><br>
+          Your impressions and feedback on the artifact are highly valuable to us. By clicking "I agree", you confirm
+          that you understand and accept these terms.
+        </p>
+
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/script.js"></script>
+</body>
+
+</html>

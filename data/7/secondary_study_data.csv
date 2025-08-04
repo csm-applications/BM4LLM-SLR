@@ -1,0 +1,12 @@
+Secondary study DOI,Title,Inclusion / Exclusion criteria,Prompt instruction
+10.1016/j.infsof.2022.107008,Predictive maintenance using digital twins: A systematic literature review,"Inclusion criteria:
+
+- IC1: The study must have full text (e.g., abstract-only papers are not considered)
+- IC2: The study must be a primary study
+- IC3: The study must be related to predictive maintenance using Digital Twins
+
+Exclusion criteria:
+
+- EC1: The study is a duplicate publication
+- EC2: The study is published before 2002
+- EC3: The study is published in a language other than English","The paper is included, if all inclusion criteria match. If the paper matches any exclusion criteria, it is excluded."

@@ -1,0 +1,11 @@
+Secondary study DOI,Title,Inclusion / Exclusion criteria,Prompt instruction
+10.1016/j.infsof.2020.106257,Time pressure in software engineering: A systematic review,"Inclusion criteria:
+
+- IC1: The main focus is time pressure in software engineering.
+- IC2: The paper presents empirical evidence of time pressure in software engineering.
+
+Exclusion criteria:
+
+- EC1: The paper was written in language other than English.
+- EC2: Not a scientific source.
+- EC3: The task studied is not a software development task","The paper is included, if any inclusion criteria match. If the paper matches any exclusion criteria, it is excluded."

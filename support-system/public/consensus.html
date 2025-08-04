@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Consensus Review</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/style.css" />
+</head>
+
+<body class="bg-light" style="height: 100vh;">
+
+    <!-- Sidebar Offcanvas -->
+    <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="sidebar" aria-labelledby="sidebarLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="sidebarLabel"><a style="text-decoration: none; color: white;"
+                    href="login-management.html"> BM4LLM-SLR </a></h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="nav flex-column">
+                <li class="nav-item text-white-50 fw-bold mt-2">Welcome</li>
+                <li class="nav-item"><a class="nav-link text-white" href="index.html">Introduction</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="instructions.html">Instructions</a></li>
+
+                <li class="nav-item text-white-50 fw-bold mt-4">Configuration</li>
+                <li class="nav-item"><a class="nav-link text-white" href="questionnaire.html">Participant Profile</a>
+                </li>
+                <li class="nav-item"><a class="nav-link text-white" href="preferences.html">Run Setup</a></li>
+
+                <li class="nav-item text-white-50 fw-bold mt-4">Pre-Selection Phase</li>
+                <li class="nav-item"><a class="nav-link text-white" href="review.html">LLM-Assisted Review</a></li>
+
+                <li class="nav-item text-white-50 fw-bold mt-4">Looping Phase</li>
+                <li class="nav-item"><a class="nav-link text-white" href="hil-confidence.html">Start Looping</a></li>
+
+                <li class="nav-item text-white-50 fw-bold mt-4">Results</li>
+                <li class="nav-item"><a class="nav-link text-white active" href="#">Final Report</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Top Navbar -->
+    <nav class="navbar bg-dark text-white">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar"
+                aria-controls="sidebar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <span class="navbar-brand mb-0 h1 text-white"><a style="text-decoration: none; color: white;"
+                    href="login-management.html"> BM4LLM-SLR </a></span>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-12 bg-white p-4 rounded shadow-sm">
+                <h2 class="mb-4 text-center">Consensus Review</h2>
+                <div id="cardsContainer"></div>
+                <button id="download-btn" class="btn btn-success mt-4">Download Results</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- JSZip for ZIP file generation -->
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+
+    <script>
+        let excludedStudies = [];
+
+        async function loadRunData() {
+            const runId = localStorage.getItem("runId");
+            const res = await fetch(`/get-run/${runId}`);
+            if (!res.ok) {
+                alert("Failed to load run data.");
+                return null;
+            }
+            return res.json();
+        }
+
+        function renderStudies() {
+            const raw = localStorage.getItem("excludedStudies");
+            if (!raw) {
+                alert("No studies found in local storage.");
+                return;
+            }
+
+            try {
+                excludedStudies = JSON.parse(raw);
+                if (!Array.isArray(excludedStudies) || excludedStudies.length === 0) {
+                    alert("No valid studies found.");
+                    return;
+                }
+            } catch (e) {
+                console.error("Error parsing excludedStudies:", e);
+                alert("Failed to load studies due to invalid data.");
+                return;
+            }
+
+            const container = document.getElementById("cardsContainer");
+            container.innerHTML = "";
+
+            excludedStudies.forEach((study, idx) => {
+                if (!study || !study.Title) {
+                    console.warn(`Invalid study at index ${idx}:`, study);
+                    return;
+                }
+                const card = document.createElement("div");
+                card.className = "card mb-4";
+                card.setAttribute("data-idx", idx);
+                card.innerHTML = `
+          <div class="card-body">
+            <h5 class="card-title">${study.Title}</h5>
+            <p><strong>Abstract:</strong> ${study.Abstract}</p>
+            <p><strong>Keywords:</strong> ${study.Keywords || "—"}</p>
+
+            <h6 class="mt-3">Model Decisions</h6>
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Criteria</th>
+                  <th>First Model</th>
+                  <th>Second Model</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${Object.keys(study.modeldecision || {}).map(criteria => `
+                  <tr>
+                    <td>${criteria}</td>
+                    <td>${study.modeldecision[criteria]}</td>
+                    <td>${study.secondmodelopinion[criteria]}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+
+            <div class="mt-3">
+              <label class="form-label">Select Decision:</label>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="decision${idx}" id="include${idx}" value="include">
+                <label class="form-check-label" for="include${idx}">Include</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="decision${idx}" id="exclude${idx}" value="exclude">
+                <label class="form-check-label" for="exclude${idx}">Exclude</label>
+              </div>
+            </div>
+          </div>`;
+                container.appendChild(card);
+            });
+
+            bindDownloadEvent();
+        }
+
+        function bindDownloadEvent() {
+            document.getElementById('download-btn').addEventListener('click', () => {
+                const included = [];
+                const excluded = [];
+
+                const cards = document.querySelectorAll(".card");
+                if (cards.length !== excludedStudies.length) {
+                    console.error(`Mismatch: ${cards.length} cards, but ${excludedStudies.length} studies`);
+                    alert("Data mismatch detected. Please reload the page.");
+                    return;
+                }
+
+                for (let i = 0; i < cards.length; i++) {
+                    const card = cards[i];
+                    const includeRadio = card.querySelector(`input[name="decision${i}"][value="include"]`);
+                    const excludeRadio = card.querySelector(`input[name="decision${i}"][value="exclude"]`);
+
+                    if (!includeRadio.checked && !excludeRadio.checked) {
+                        alert(`Please select a decision for study ${i + 1}.`);
+                        return;
+                    }
+
+                    const study = excludedStudies[i];
+                    if (!study) {
+                        console.error(`Study at index ${i} is undefined`);
+                        alert(`Error: Study ${i + 1} is missing data.`);
+                        return;
+                    }
+
+                    study.userDecision = includeRadio.checked ? "Include" : "Exclude";
+                    if (includeRadio.checked) {
+                        included.push(study);
+                    } else {
+                        excluded.push(study);
+                    }
+                }
+
+                const zip = new JSZip();
+                const metadata = {
+                    config: {},
+                    fullcriteria: localStorage.getItem("fullCriteria") || ""
+                };
+
+                zip.file("metadata.json", JSON.stringify(metadata, null, 2));
+                zip.file("included.json", JSON.stringify(included, null, 2));
+                zip.file("excluded.json", JSON.stringify(excluded, null, 2));
+
+                zip.generateAsync({ type: "blob" }).then(content => {
+                    const a = document.createElement("a");
+                    a.href = URL.createObjectURL(content);
+                    a.download = "consensus-results.zip";
+                    a.click();
+                    URL.revokeObjectURL(a.href);
+                });
+            });
+        }
+
+        window.addEventListener("DOMContentLoaded", renderStudies);
+    </script>
+</body>
+
+</html>

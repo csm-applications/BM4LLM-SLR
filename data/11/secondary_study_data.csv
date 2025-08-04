@@ -1,0 +1,17 @@
+Secondary study DOI,Title,Inclusion / Exclusion criteria,Prompt instruction
+10.1016/j.jss.2021.111081,Multi-paradigm modeling for cyber–physical systems: A systematic mapping review,"Inclusion criteria:
+
+- IC1: Publication date from 1/1/2006
+- IC2: Relevance to the research questions
+- IC3: Explicit mention of multi-paradigm modeling of cyber–physical system
+- IC4: Papers that report methodologies, metrics, or formalisms for modeling CPS
+- IC5: Analysis of relevant application domains for modeling of CPS
+
+Exclusion criteria:
+
+- EC1: Informal literature (powerpoint slides, conference reviews, informal reports) and secondary/tertiary studies (reviews, editorials, abstracts, keynotes, posters, surveys, books)
+- EC2: Duplicated papers
+- EC3: Papers that did not report a multi-paradigm modeling method for CPS
+- EC4: Papers with the same content in different paper versions
+- EC5: Papers written a language other than English
+- EC6: Purely hardware or electrical engineering papers","The paper is included, if all inclusion criteria match. If the paper matches any exclusion criteria, it is excluded."

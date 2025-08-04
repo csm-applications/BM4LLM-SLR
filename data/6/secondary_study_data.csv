@@ -1,0 +1,17 @@
+Secondary study DOI,Title,Inclusion / Exclusion criteria,Prompt instruction
+10.1016/j.infsof.2021.106783,How far are we from reproducible research on code smell detection? A systematic literature review,"Inclusion criteria:
+
+- IC1: The entry is a single journal paper, chapter of a book or conference proceedings paper which requires peer review (i.e., it is not
+an editorial, abstract, technical report etc.).
+- IC2: The paper is written in English.
+- IC3: The paper was published in 1999 or later.
+- IC4: Title or abstract of the paper indicates that it is related to software engineering.
+- IC5: Title or abstract of the paper indicates that at least one code smell/anti-pattern plays an important part of the study.
+- IC6: Title or abstract of the paper indicates that it might use machine learning techniques.
+- IC7: Abstract or full text of the paper indicates that it focuses on code smells/anti-patterns in programming languages.
+- IC8: Abstract or full text of the paper indicates that it focuses on code smells/anti-patterns detection using source code.
+- IC9: The paper does not focus on techniques for resolving code smells/anti-patterns.
+- IC10: The paper does not focus on using code smells/anti-patterns as predictors of other code or project traits.
+- IC11: The paper focuses on detection/prediction of code smells/antipatterns.
+- IC12: If the paper is a chapter of a book or conference proceedings publication, its authors have not published a study under the same title in a journal (we want to include the paper once and it may be expected that the journal version includes more details).
+- IC13: Full text of the paper is available.","The paper is included, if all inclusion criteria match. If the paper matches any exclusion criteria, it is excluded."

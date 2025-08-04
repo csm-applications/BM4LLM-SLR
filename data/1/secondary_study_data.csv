@@ -1,0 +1,18 @@
+Secondary study DOI,Title,Authors,Inclusion / Exclusion criteria,Prompt instruction
+10.1016/j.infsof.2022.107128,Machine learning in software defect prediction: A business-driven systematic mapping study,"Szymon Stradowski, Lech Madeyski","Inclusion criteria:
+
+- IC1: The paper is an empirical study in software engineering (field of computer science).
+- IC2: The paper is a primary study.
+- IC3: The paper is focused on predicting defects in a software system using machine learning
+techniques.
+- IC4: The paper evaluates, analyses, or compares prediction methods and provides evidence for
+efficiency.
+
+Exclusion criteria:
+
+- EC1: The paper was not a peer-reviewed article, conference proceeding, or book
+chapter.
+- EC2: The publication’s language was other than English.
+- EC3: The paper was made available in Scopus after the 23rd of February 2022.
+- EC4: The same or limited results were already published and included in another
+study","The paper is included, if all inclusion criteria match. If the paper matches any exclusion criteria, it is excluded."

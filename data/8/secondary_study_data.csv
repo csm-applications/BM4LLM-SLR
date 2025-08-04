@@ -1,0 +1,17 @@
+Secondary study DOI,Title,Inclusion / Exclusion criteria,Prompt instruction
+10.1007/s10270-021-00908-8,Model-driven engineering for mobile robotic systems: a systematic mapping study,"Inclusion criteria:
+
+- IC1: Studies applying MDE methods or techniques for MRSs. We consider the definition of methodology, given by [62], as a set of methods and techniques, possibly supported by a tool.
+- IC2: Studies focusing on MDE for MRSs analysed from a software engineering for robotics perspective. For example, we do not consider studies that cite MDE as a background, but actually focus on other aspects, such as mechanical or electrical engineering.
+- IC3: Studies including a kind of evaluation or validation of the proposed MDE method or technique. For example, realworld software projects, empirical examples, case study, experiment, formal analysis.
+- IC4: Peer-reviewed studies: journal papers, workshop papers, conference papers.
+- IC5: Studies written in English.
+- IC6: Studies are available in full text.
+
+Exclusion criteria:
+
+- EC1: Secondary literature studies.
+- EC2: Tutorial papers, short papers, poster papers, editorials, books, keynotes, tutorial summaries, tool demonstrations and panel discussions, books, introductory papers for books and workshops, technical reports, and any non peer-reviewed publication.
+- EC3: Studies not in the scope of software engineering for robotics.
+- EC4: Studies published before 2000. Since MDE is generally regarded to be born after the OMG standard for the model-driven architecture proposed in 2000.
+","The paper is included, if all inclusion criteria match. If the paper matches any exclusion criteria, it is excluded."

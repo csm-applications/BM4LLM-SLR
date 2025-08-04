@@ -1,0 +1,15 @@
+Secondary study DOI,Title,Inclusion / Exclusion criteria,Prompt instruction
+10.1016/j.jss.2022.111515,A decade of code comment quality assessment: A systematic literature review,"Inclusion criteria:
+
+- IC1: The topic of the paper is about code comment quality.
+- IC2: The study presents a model/technique/approach to assess code comments or software documentation including code comments.
+
+Exclusion criteria:
+- EC1: he paper is not in english.
+- EC2: It does not assess any form of quality aspects of comments e.g., content, style, or language used.
+- EC3: It is not published in a technical track.
+- EC4: It is a survey paper.
+- EC5: It is not a peer reviewed paper, or it is a pre-print.
+- EC6: It covers other documentation artifacts, i.e., not comments.
+- EC7: It is shorter than 5 pages.
+","The paper is included, if all inclusion criteria match. If the paper matches any exclusion criteria, it is excluded."
