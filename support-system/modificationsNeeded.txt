@@ -1,7 +1,0 @@
-Iteração 01 -
-
-1- alguns critérios de inclusão e exclusão tiveram que ser excluídos por não fazerem sentido para essa etapa...
-Por exemplo, se existem estudos iguais ou mais novos do mesmo autor
-
-
-2- talvez será necessário adicionar validação humana na etapa 01 de high confidence... o LLM inclui muitas coisas

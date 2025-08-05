@@ -6,6 +6,7 @@
   <title>Step 4 – LLM Re-Evaluation (Low Confidence)</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="assets/style.css" />
+  <script src="assets/templates.js"></script>
 </head>
 
 <body class="bg-light" style="height: 100vh;">
@@ -65,17 +66,6 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-    const templates = {
-      felizardo: (title, abstract, keywords, criteria) => `
-Assume you are a software engineering researcher conducting a systematic literature review (SLR).
-Title: ${title}
-Abstract: ${abstract}
-Keywords: ${keywords}
-Using a 1-7 Likert scale (1 - Strongly disagree, ..., 7 - Strongly agree), rate your agreement with the following criteria (only number). Remember if it is not possible to evaluate based on the provided information give the score -1.
-${localStorage.getItem("fullCriteria")}
-Return the result in CSV format with columns: Criteria, Rate\n
-Do not give me the file, give me in chat in csv format`.trim()
-    };
 
     async function loadRunData() {
       const runId = localStorage.getItem("runId");
@@ -88,7 +78,14 @@ Do not give me the file, give me in chat in csv format`.trim()
     }
 
     function generatePrompt(template, study, criteria) {
-      return templates[template]?.(study.Title, study.Abstract, study.Keywords || '', criteria) || 'Prompt unavailable.';
+      return templates[template]?.(
+        study.Title,
+        study.Abstract,
+        study.Keywords || '',
+        study["Publication venue"] || '',
+        study["Publication date"] || '',
+        criteria
+      ) || 'Prompt unavailable.';
     }
 
     async function loadAndRender() {
@@ -101,7 +98,7 @@ Do not give me the file, give me in chat in csv format`.trim()
       excludedStudies = JSON.parse(raw);
       const run = await loadRunData();
       const promptType = run?.prompt || 'felizardo';
-      const criteria = run?.criteria || 'Insert your inclusion/exclusion criteria here';
+      const criteria = localStorage.getItem("fullCriteria") || 'Insert your inclusion/exclusion criteria here';
 
       const model2Name = localStorage.getItem('model2') || 'Model 2';
       const model3Name = localStorage.getItem('model3') || 'Model 3';

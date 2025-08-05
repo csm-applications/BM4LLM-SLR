@@ -198,10 +198,10 @@
             if (exclusionCriteria.length === 0) {
                 exclusionPass = false;
             } else if (exclusionMode === 'all') {
-                exclusionPass = exclusionCriteria.every(c => output[c] !== undefined && output[c] >= config[c]);
+                exclusionPass = exclusionCriteria.every(c => output[c] !== undefined && output[c] <= config[c]);
                 console.log(exclusionPass)
             } else if (exclusionMode === 'one') {
-                exclusionPass = exclusionCriteria.some(c => output[c] !== undefined && output[c] >= config[c]);
+                exclusionPass = exclusionCriteria.some(c => output[c] !== undefined && output[c] <= config[c]);
             }
 
             // Estudo será incluído apenas se passar na inclusão e NÃO passar na exclusão

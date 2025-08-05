@@ -1,0 +1,36 @@
+--------------- Iteração 01 ---------------
+
+1- alguns critérios de inclusão e exclusão tiveram que ser excluídos por não fazerem sentido para essa etapa...
+Por exemplo, se existem estudos iguais ou mais novos do mesmo autor
+
+2- talvez será necessário adicionar validação humana na etapa 01 de high confidence... o LLM inclui muitas coisas
+
+3- ajuste do critério de inclusão (é um estudo primário se torna um critério de exclusão)
+
+4- não é mais necessário que o usuário faça o seu appointment do criteria, apenas inclusão e exclusão
+
+5- os critérios de inclusão devem ser escritos em formas negativas, por exemplo:
+
+6- O estudo não é um estudo primário (nesse caso quando modelo concordar -  o estudo deve ser aceito)
+
+
+--------------- Iteração 02 ---------------
+
+1- não é adequado questionar se um venue é peer-reviewed... sem contexto o chatgpt não encontra essa informação a menos que ele tenha acesso ao research feature.
+
+2- o prompt é extremamente sensível e importante, o método permite refinar iterativamente o prompt antes de iniciar a seleção (teste piloto)
+
+3- as instruções do conjunto de SESLR-eval parece estar calibrado apenas para SLR feita por humanos... os critérios parecem ser aplicáveis quando se avalia os texto completo e  title, abstract e keywords. Apenas para title, abstract e keywords me parece dificil avaliar alguns critérios
+
+4- siglas sendo usadas em critérios sem definições são confusas e impedem a compreensão do modelo de linguagem
+
+5- foi necessário fazer clean-up dos dados por copyright do SESLR-EVAL
+
+6- "sujeira" em dados como o abstract faz o llm entender que não está escrito em inglês - adicionar explicitamente para ignorar isso
+
+7- deve-se pré-processar os dados e excluir estudos baseados em um time-frame, lingua, e venue usando o jabref.
+
+8- não se deve usar critérios que não podem ser avaliados pelo titulo e pelo abstract
+
+
+--------------- Iteração 03 ---------------

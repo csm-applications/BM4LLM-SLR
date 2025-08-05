@@ -61,7 +61,7 @@
         <li class="nav-item"><a class="nav-link text-white" href="hil-confidence.html">Start Looping</a></li>
 
         <li class="nav-item text-white-50 fw-bold mt-4">Results</li>
-        <li class="nav-item"><a class="nav-link text-white active" href="#">Final Report</a></li>
+        <li class="nav-item"><a class="nav-link text-white active" href="finalReport.html">Final Report</a></li>
       </ul>
     </div>
   </div>
@@ -187,9 +187,9 @@
       if (validExclusionCriteria.length === 0) {
         exclusionPass = false; // Sem critérios válidos de exclusão, não passa exclusão
       } else if (exclusionMode === 'all') {
-        exclusionPass = validExclusionCriteria.every(c => output[c] >= config[c]);
+        exclusionPass = validExclusionCriteria.every(c => output[c] <= config[c]);
       } else if (exclusionMode === 'one') {
-        exclusionPass = validExclusionCriteria.some(c => output[c] >= config[c]);
+        exclusionPass = validExclusionCriteria.some(c => output[c] <= config[c]);
       }
 
       // Estudo será incluído apenas se passar na inclusão e NÃO passar na exclusão
@@ -217,8 +217,8 @@
           <p><strong>Authors:</strong> ${study.Authors}</p>
           <p><strong>Abstract:</strong> ${study.Abstract}</p>
           <p><strong>Keywords:</strong> ${study.Keywords}</p>
-          <p><strong>Publication Venue:</strong> ${study["Publication venue"]}</p>
-          <p><strong>Publication Data:</strong> ${study["Publication data"]}</p>
+          <p><strong>Publication venue:</strong> ${study["Publication venue"]}</p>
+          <p><strong>Publication date:</strong> ${study["Publication date"]}</p>
           <p><strong>Model Decision:</strong> ${JSON.stringify(study.firstModelDecision)}</p>
         `;
         container.appendChild(card);
