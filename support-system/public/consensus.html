@@ -208,7 +208,7 @@
             }
 
             // Estudo será incluído apenas se passar na inclusão e NÃO passar na exclusão
-            return inclusionPass && exclusionPass;
+            return inclusionPass && !exclusionPass;
         }
 
         function generateDynamicCriteriaForm(allCriteriaKeys) {

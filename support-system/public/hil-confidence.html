@@ -42,6 +42,27 @@
     .upload-section {
       margin-top: 2rem;
     }
+
+    /* Drag and drop styles */
+    .dropzone {
+      border: 2px dashed #0d6efd;
+      border-radius: 0.375rem;
+      padding: 2rem;
+      text-align: center;
+      color: #0d6efd;
+      cursor: pointer;
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .dropzone.dragover {
+      background-color: #e9f0ff;
+      border-color: #0a58ca;
+      color: #0a58ca;
+    }
+
+    .dropzone input[type="file"] {
+      display: none;
+    }
   </style>
 </head>
 
@@ -71,7 +92,7 @@
         <li class="nav-item"><a class="nav-link text-white" href="hil-confidence.html">Start Looping</a></li>
 
         <li class="nav-item text-white-50 fw-bold mt-4">Results</li>
-        <li class="nav-item"><a class="nav-link text-white" href="#">Final Report</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="finalReport.html">Final Report</a></li>
 
       </ul>
     </div>
@@ -124,9 +145,14 @@
           <h5>Upload Output Assets ZIP</h5>
           <p class="text-muted">Please upload the ZIP file containing the output JSON files (metadata.json, included.json, excluded.json, fullRunStudies.json). The data
             will be extracted and saved locally for the next steps.</p>
-          <input type="file" id="uploadZip" accept=".zip" class="form-control mb-3" />
-          <div id="uploadStatus" class="text-success" style="display: none;">✅ File successfully loaded and saved.</div>
-          <div id="uploadError" class="text-danger" style="display: none;"></div>
+
+          <label for="uploadZip" class="dropzone" id="dropzone">
+            Drag & Drop your ZIP file here, or click to select
+            <input type="file" id="uploadZip" accept=".zip" />
+          </label>
+
+          <div id="uploadStatus" class="text-success mt-3" style="display: none;">✅ File successfully loaded and saved.</div>
+          <div id="uploadError" class="text-danger mt-3" style="display: none;"></div>
         </div>
 
       </div>
@@ -147,15 +173,54 @@
       window.location.href = 'hil-high.html';
     });
 
-    document.getElementById('uploadZip').addEventListener('change', function () {
-      const file = this.files[0];
-      const status = document.getElementById('uploadStatus');
-      const error = document.getElementById('uploadError');
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('uploadZip');
+    const status = document.getElementById('uploadStatus');
+    const error = document.getElementById('uploadError');
+
+    // Prevent default drag behaviors
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      dropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+    });
+
+    // Highlight drop area when file is dragged over it
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropzone.addEventListener(eventName, () => {
+        dropzone.classList.add('dragover');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropzone.addEventListener(eventName, () => {
+        dropzone.classList.remove('dragover');
+      });
+    });
+
+    // Handle dropped files
+    dropzone.addEventListener('drop', (e) => {
+      if (e.dataTransfer.files.length) {
+        fileInput.files = e.dataTransfer.files;
+        handleFile(fileInput.files[0]);
+      }
+    });
+
+    // Handle click to open file dialog
+    dropzone.addEventListener('click', () => fileInput.click());
+
+    // Handle file input change
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length) {
+        handleFile(fileInput.files[0]);
+      }
+    });
+
+    function handleFile(file) {
       status.style.display = 'none';
       error.style.display = 'none';
       error.textContent = '';
-
-      if (!file) return;
 
       if (!file.name.toLowerCase().endsWith('.zip')) {
         error.style.display = 'block';
@@ -192,9 +257,7 @@
                 return;
               }
             } else {
-              // File not found in ZIP, optional: warn user or just skip
               console.warn(`${filename} not found in ZIP.`);
-              // We do not treat as error because maybe user has partial files
             }
           }
 
@@ -212,7 +275,7 @@
         }
       };
       reader.readAsArrayBuffer(file);
-    });
+    }
   </script>
 
 </body>

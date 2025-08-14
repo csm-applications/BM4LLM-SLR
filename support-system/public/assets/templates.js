@@ -11,13 +11,10 @@ Keywords: ${keywords}
 Publication venue: ${publication}
 Publication date: ${date}
 
-Using a 1-7 Likert scale (1 - Strongly disagree,
-2 - Disagree, 3 - Somewhat disagree, 4 - Neutral, 5 - Somewhat agree, 6 - Agree, 7 - Strongly agree,), rate your agreement with the following criteria (only number). 
+Using a 1-7 Likert scale (1 - Strongly disagree, 2 - Disagree, 3 - Somewhat disagree, 4 - Neutral, 5 - Somewhat agree, 6 - Agree, 7 - Strongly agree,), rate your agreement with the following criteria (only number). 
 If you rate near 7 to a inclusion criteria, the study meet with this criteria and should be included. If you rate near 7 to a exclusion criteria, the study also meet with this criteria and should be excluded. 
 
 IMPORTANT: Don't be lenient, is better to exclude a paper in this phase. But, remember if it is not possible to evaluate based on the provided information give the score -1.
-
-
 
 ${criteria}
 
@@ -29,13 +26,19 @@ do not make a file, just a text formatted in csv
   huotala: (title, abstract, keywords, publication, date, criteriaText, instructions = '') => `
 Role: You are a software engineering researcher conducting a systematic literature review (SLR).
 
-Task: Evaluate a primary study using **three types of assessments**, applied to both:
-a) The **overall** relevance of the primary study
-b) Each individual **inclusion/exclusion criterion**
+Task: Evaluate a primary study using each individual **inclusion/exclusion criterion**
 
 **Likert scale**
 - **Value:** An integer from \`1\` to \`7\`
-- **Interpretation:** Degree of agreement with the criterion being met, or the relevance of the study
+- **Interpretation:** Using a 1-7 Likert scale (1 - Strongly disagree,
+2 - Disagree, 3 - Somewhat disagree, 4 - Neutral, 5 - Somewhat agree, 6 - Agree, 7 - Strongly agree,), rate your agreement with the following criteria (only number). 
+For inclusion criteria (IC):
+Higher ratings (6-7) = study meets the criterion → supports inclusion
+Lower ratings (1-3) = study fails the criterion → supports exclusion
+
+For exclusion criteria (EC):
+Higher ratings (6-7) = study meets the criterion → supports exclusion
+Lower ratings (1-3) = study fails the criterion → supports inclusion
 
 ### Inclusion and exclusion criteria:
 ${criteriaText}
@@ -68,6 +71,10 @@ ${publication}
 """
 ${date}
 """
+
+give me the result in CSV with the following columns: Criteria, Rate
+
+do not make a file, just a text formatted in csv
 `.trim(),
 
   thode: (title, abstract, keywords, publication, date, criteriaText) => `

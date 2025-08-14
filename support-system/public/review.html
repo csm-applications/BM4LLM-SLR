@@ -185,14 +185,14 @@
       // Exclusão
       let exclusionPass = false;
       if (validExclusionCriteria.length === 0) {
-        exclusionPass = false; // Sem critérios válidos de exclusão, não passa exclusão
+        exclusionPass = true; // Sem critérios válidos de exclusão, não passa exclusão
       } else if (exclusionMode === 'all') {
         exclusionPass = validExclusionCriteria.every(c => output[c] <= config[c]);
       } else if (exclusionMode === 'one') {
         exclusionPass = validExclusionCriteria.some(c => output[c] <= config[c]);
       }
-
       // Estudo será incluído apenas se passar na inclusão e NÃO passar na exclusão
+
       return inclusionPass && exclusionPass;
     }
 

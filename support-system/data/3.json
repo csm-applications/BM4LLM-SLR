@@ -3,7 +3,7 @@
     "Secondary study DOI": "10.1016/j.infsof.2022.107145",
     "Title": "Digital-twin-based testing for cyber\u2013physical systems: A systematic literature review",
     "Authors": "Richard J. Somers, James A. Douthwaite, David J. Wagg, Neil Walkinshaw, Robert M. Hierons",
-    "Inclusion / Exclusion criteria": "Inclusion criteria:\n- IC1: A least one testing technique is described\n- IC2: The system under test must be a cyber\u2013physical system\n- IC3: Testing is performed using a digital twin\n\nExclusion criteria:\n",
+    "Inclusion / Exclusion criteria": "Inclusion criteria:\n- IC1: A least one testing technique is described\n- IC2: The system under test must be a cyber\u2013physical system\n- IC3: Testing is performed using a digital twin\n\nExclusion criteria:\n).",
     "Prompt instruction": "The paper is included, if all inclusion criteria match. If the paper matches any exclusion criteria, it is excluded."
   },
   "primary_studies": [

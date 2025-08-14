@@ -34,3 +34,24 @@ Por exemplo, se existem estudos iguais ou mais novos do mesmo autor
 
 
 --------------- Iteração 03 ---------------
+
+Objetivo -> 1 avaliação low e 1 high do estudo 1 ao 6 e comparar as métricas
+
+9- o estudo 2 teve de ser usado o match one por conta dos critérios de avaliação
+
+10 - a definição de critérios de avaliação ruins são essenciais e geram muito retrabalho caso sejam mal definidos
+
+11- as limitações humanas de cansaço e falta de expertise não são superadas
+
+12 - para o high confidence - theme 02 - os estudos: (foi alterado no dataset)
+    - Comparative analysis of WebForms MVC and MVP architecture
+    - Spatial correlation-based motion-vector prediction for video-coding efficiency improvement
+    - Research on MVP design pattern modeling based on MDA
+
+Os modelos prediziam a exclusão e o dataset de referência a inclusão... ao realizar a apuração observou-se que o dataset de referência incluiu com base em uma sigla errada. Sendo assim o método pode detectar problemas que até mesmo o ser humano não foi capaz.
+
+13 - Não foram testadas chain of though somente prompts simples
+
+14- modelos como o gemini quando colocados na primeira etapa parecem ser mais "radicais" e produzem mais falsos negativos e exclusões erradas.
+
+15- o prompt é sensivel aos critérios de inclusão e também ao formato de saída desejado, outros detalhes não parecem ser tão relevantes.

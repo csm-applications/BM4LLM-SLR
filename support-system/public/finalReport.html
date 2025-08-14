@@ -19,6 +19,32 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
+    /* Drag & Drop */
+    .drop-zone {
+      border: 2px dashed #ccc;
+      border-radius: 6px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s ease;
+      background-color: white;
+    }
+
+    .drop-zone.dragover {
+      border-color: #0d6efd;
+      background-color: #f0f8ff;
+    }
+
+    .drop-zone input {
+      display: none;
+    }
+
+    .file-name {
+      font-size: 0.9rem;
+      color: #555;
+      margin-top: 5px;
+    }
   </style>
 </head>
 
@@ -27,8 +53,7 @@
   <!-- Sidebar Offcanvas -->
   <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="sidebar" aria-labelledby="sidebarLabel">
     <div class="offcanvas-header">
-      <h5 class="offcanvas-title" id="sidebarLabel"><a style="text-decoration: none; color: white;"
-          href="login-management.html"> BM4LLM-SLR </a></h5>
+      <h5 class="offcanvas-title" id="sidebarLabel"><a style="text-decoration: none; color: white;" href="login-management.html"> BM4LLM-SLR </a></h5>
       <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
@@ -52,12 +77,10 @@
   <!-- Top Navbar -->
   <nav class="navbar bg-dark text-white">
     <div class="container-fluid">
-      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar"
-        aria-controls="sidebar">
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <span class="navbar-brand mb-0 h1 text-white"><a style="text-decoration: none; color: white;"
-          href="login-management.html"> BM4LLM-SLR </a></span>
+      <span class="navbar-brand mb-0 h1 text-white"><a style="text-decoration: none; color: white;" href="login-management.html"> BM4LLM-SLR </a></span>
     </div>
   </nav>
 
@@ -70,27 +93,52 @@
       <button class="btn btn-success" id="downloadBtn" disabled>Download Results (.json)</button>
     </div>
 
+    <!-- Form with Drag and Drop -->
     <form id="uploadForm" class="mb-4">
       <div class="row g-3">
         <div class="col-md-12">
-          <label for="outputAssetsZip" class="form-label">output-assets.zip</label>
-          <input type="file" class="form-control" id="outputAssetsZip" accept=".zip" />
+          <label class="form-label">output-assets.zip</label>
+          <div class="drop-zone" data-target="outputAssetsZip">
+            Arraste o arquivo aqui ou clique para selecionar
+            <input type="file" id="outputAssetsZip" accept=".zip" />
+            <div class="file-name" id="fileName-outputAssetsZip"></div>
+          </div>
         </div>
-        <div class="col-md-6>
-          <label for=" consensusResultsZip" class="form-label">consensus-results.zip</label>
-          <input type="file" class="form-control" id="consensusResultsZip" accept=".zip" />
+
+        <div class="col-md-12">
+          <label class="form-label">consensus-results.zip</label>
+          <div class="drop-zone" data-target="consensusResultsZip">
+            Arraste o arquivo aqui ou clique para selecionar
+            <input type="file" id="consensusResultsZip" accept=".zip" />
+            <div class="file-name" id="fileName-consensusResultsZip"></div>
+          </div>
         </div>
+
         <div class="col-md-4">
-          <label for="fullRunStudiesJson" class="form-label">fullRunStudies.json</label>
-          <input type="file" class="form-control" id="fullRunStudiesJson" accept=".json" />
+          <label class="form-label">fullRunStudies.json</label>
+          <div class="drop-zone" data-target="fullRunStudiesJson">
+            Arraste o arquivo aqui ou clique para selecionar
+            <input type="file" id="fullRunStudiesJson" accept=".json" />
+            <div class="file-name" id="fileName-fullRunStudiesJson"></div>
+          </div>
         </div>
+
         <div class="col-md-4">
-          <label for="includedJson" class="form-label">included.json</label>
-          <input type="file" class="form-control" id="includedJson" accept=".json" />
+          <label class="form-label">included.json</label>
+          <div class="drop-zone" data-target="includedJson">
+            Arraste o arquivo aqui ou clique para selecionar
+            <input type="file" id="includedJson" accept=".json" />
+            <div class="file-name" id="fileName-includedJson"></div>
+          </div>
         </div>
+
         <div class="col-md-4">
-          <label for="excludedJson" class="form-label">excluded.json</label>
-          <input type="file" class="form-control" id="excludedJson" accept=".json" />
+          <label class="form-label">excluded.json</label>
+          <div class="drop-zone" data-target="excludedJson">
+            Arraste o arquivo aqui ou clique para selecionar
+            <input type="file" id="excludedJson" accept=".json" />
+            <div class="file-name" id="fileName-excludedJson"></div>
+          </div>
         </div>
       </div>
       <button type="submit" class="btn btn-primary mt-3">Load and Display</button>
@@ -118,6 +166,39 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
+    // Drag & Drop Handler
+    document.querySelectorAll(".drop-zone").forEach(zone => {
+      const input = zone.querySelector("input");
+      const fileNameDisplay = zone.querySelector(".file-name");
+
+      zone.addEventListener("click", () => input.click());
+
+      input.addEventListener("change", () => {
+        if (input.files.length) {
+          fileNameDisplay.textContent = input.files[0].name;
+        }
+      });
+
+      zone.addEventListener("dragover", e => {
+        e.preventDefault();
+        zone.classList.add("dragover");
+      });
+
+      zone.addEventListener("dragleave", () => {
+        zone.classList.remove("dragover");
+      });
+
+      zone.addEventListener("drop", e => {
+        e.preventDefault();
+        zone.classList.remove("dragover");
+
+        if (e.dataTransfer.files.length) {
+          input.files = e.dataTransfer.files;
+          fileNameDisplay.textContent = input.files[0].name;
+        }
+      });
+    });
+
     function normalizeTitle(title) {
       return title?.toLowerCase().replace(/\s+/g, " ").trim();
     }
