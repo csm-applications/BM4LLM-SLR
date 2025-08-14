@@ -47,7 +47,7 @@
           href="login-management.html"> BM4LLM-SLR </a></span>
     </div>
   </nav>
-  
+
 
   <div class="container py-5">
     <div class="row justify-content-center">
@@ -69,79 +69,92 @@
     console.log(localStorage);
     const urlParams = new URLSearchParams(window.location.search);
     console.log(currentRun);
-    const datasetId = currentRun.theme
-    const template = urlParams.get('template');
+    //const datasetId = currentRun.theme
+    const datasetId = 1
+    //const template = urlParams.get('template');
+    const template = "felizardo"
     const email = localStorage.getItem('participantEmail');
     let selectedStudiesData = [];
 
 
     async function loadDataset() {
-      const res = await fetch(`/get-dataset/${datasetId}`);
-      if (!res.ok) {
-        alert("Erro ao carregar o dataset.");
-        return;
-      }
+      try {
+        // Carrega dataset a partir de arquivo estático no GitHub Pages
+        //const res = await fetch(`./assets/data/${datasetId}.json`);
+        const res = await fetch(`./assets/data/1.json`);
+        if (!res.ok) {
+          alert("Erro ao carregar o dataset.");
+          return;
+        }
 
-      const runId = localStorage.getItem("runId");
-      const runDataRes = await fetch(`/get-run/${runId}`);
-      if (!res.ok) {
-        alert("Erro ao carregar o dataset.");
-        return;
-      }
-      const runData = await runDataRes.json();
+        // Carrega run data a partir de arquivo estático
+        const runId = localStorage.getItem("runId");
+        //const runDataRes = await fetch(`./assets/runs/${runId}.json`);
+        const runDataRes = await fetch(`./assets/data/1.json`);
+        if (!runDataRes.ok) {
+          alert("Erro ao carregar o run data.");
+          return;
+        }
 
-      const data = await res.json();
-      const studies = data.primary_studies || [];
-      const selectedStudies = shuffleArray(studies).slice(0, 20);
-      selectedStudiesData = selectedStudies;
+        const runData = await runDataRes.json();
+        const data = await res.json();
 
-      const container = document.getElementById('cardsContainer');
-      container.innerHTML = "";
+        const studies = data.primary_studies || [];
+        const selectedStudies = shuffleArray(studies).slice(0, 20);
+        selectedStudiesData = selectedStudies;
 
-      console.log(runData)
+        const container = document.getElementById('cardsContainer');
+        container.innerHTML = "";
 
-      selectedStudies.forEach((study, idx) => {
-        const prompt = generatePrompt(runData.prompt, study, data);
-        const card = document.createElement('div');
-        card.className = "card mb-4 w-100";
-        card.setAttribute("data-study", JSON.stringify(study));
+        console.log(runData);
 
-        card.innerHTML = `
-  <div class="card-body">
-    <h5 class="card-title">${study["Title"]}</h5>
-    <p><strong>Abstract:</strong> ${study["Abstract"]}</p>
-    <p><strong>Keywords:</strong> ${study["Keywords"] || '—'}</p>
-    <p><strong>Publication:</strong> ${study["Publication venue"] || '—'}</p>
-    <p><strong>Date:</strong> ${study["Publication date"] || '—'}</p>
+        selectedStudies.forEach((study, idx) => {
+          //const prompt = generatePrompt(runData.prompt, study, data);
+          const prompt = generatePrompt(template, study, data);
+          const card = document.createElement('div');
+          card.className = "card mb-4 w-100";
+          card.setAttribute("data-study", JSON.stringify(study));
 
-    <div class="accordion mb-3" id="promptAccordion${idx}">
-      <div class="accordion-item">
-        <h2 class="accordion-header">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-            data-bs-target="#collapsePrompt${idx}" aria-expanded="false" aria-controls="collapsePrompt${idx}">
-            Show Prompt
-          </button>
-        </h2>
-        <div id="collapsePrompt${idx}" class="accordion-collapse collapse" data-bs-parent="#promptAccordion${idx}">
-          <div class="accordion-body">
-            <pre id="promptText${idx}" class="bg-light p-3 rounded" style="white-space: pre-wrap;">${prompt}</pre>
-            <button class="btn btn-sm btn-primary mt-2 copy-btn" data-target="promptText${idx}">Copy</button>
+          card.innerHTML = `
+        <div class="card-body">
+          <h5 class="card-title">${study["Title"]}</h5>
+          <p><strong>Abstract:</strong> ${study["Abstract"]}</p>
+          <p><strong>Keywords:</strong> ${study["Keywords"] || '—'}</p>
+          <p><strong>Publication:</strong> ${study["Publication venue"] || '—'}</p>
+          <p><strong>Date:</strong> ${study["Publication date"] || '—'}</p>
+
+          <div class="accordion mb-3" id="promptAccordion${idx}">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#collapsePrompt${idx}" aria-expanded="false" aria-controls="collapsePrompt${idx}">
+                  Show Prompt
+                </button>
+              </h2>
+              <div id="collapsePrompt${idx}" class="accordion-collapse collapse" data-bs-parent="#promptAccordion${idx}">
+                <div class="accordion-body">
+                  <pre id="promptText${idx}" class="bg-light p-3 rounded" style="white-space: pre-wrap;">${prompt}</pre>
+                  <button class="btn btn-sm btn-primary mt-2 copy-btn" data-target="promptText${idx}">Copy</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Paste the response of ${localStorage.getItem("model1") || "the model"} here:</label>
+            <textarea class="form-control output-box" rows="4" placeholder="Paste the result here..."></textarea>
           </div>
         </div>
-      </div>
-    </div>
+      `;
 
-    <div class="mb-3">
-      <label class="form-label">Paste the response of ${localStorage.getItem("model1") || "the model"} here:</label>
-      <textarea class="form-control output-box" rows="4" placeholder="Paste the result here..."></textarea>
-    </div>
-  </div>
-`;
+          container.appendChild(card);
+        });
 
-        container.appendChild(card);
-      });
-
-      bindSaveEvents();
+        bindSaveEvents();
+      } catch (error) {
+        console.error("Erro ao carregar dados:", error);
+        alert("Erro inesperado ao carregar dados.");
+      }
     }
 
     function generatePrompt(type, study, data) {
@@ -153,6 +166,7 @@
       const fullCriteria = data.secondary_study["Inclusion / Exclusion criteria"];
       localStorage.setItem("fullCriteria", fullCriteria);
       const instructions = data["Prompt instruction"] || "";
+      console.log(type)
       switch (type) {
         case "felizardo":
           return templates.felizardo(title, abstract, keywords, publication, date, fullCriteria);
