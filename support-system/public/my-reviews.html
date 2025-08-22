@@ -392,6 +392,28 @@
     modal.show();
   }
 
+
+  // ============================
+// Criteria Management
+// ============================
+
+// Generic function used by both inclusion and exclusion criteria
+function addCriteria(containerId) {
+  const container = document.getElementById(containerId);
+  const placeholder =
+    containerId === "inclusionCriteria"
+      ? "Inclusion Criterion"
+      : "Exclusion Criterion";
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.className = "form-control mb-2";
+  input.placeholder = placeholder;
+  input.required = true;
+
+  container.appendChild(input);
+}
+
   // ============================
   // Data Handling
   // ============================
@@ -532,7 +554,7 @@
     restoreForm();
   });
 
-   const dropZone = document.getElementById("dropZone");
+  const dropZone = document.getElementById("dropZone");
   const fileInput = document.getElementById("jsonFileInput");
   const fileNameDisplay = document.getElementById("fileName");
 
@@ -571,7 +593,7 @@
   // Função para salvar no localStorage
   function handleFile(file) {
     const reader = new FileReader();
-    reader.onload = function(event) {
+    reader.onload = function (event) {
       try {
         const jsonData = JSON.parse(event.target.result); // valida JSON
         localStorage.setItem("uploadedJsonFile", JSON.stringify(jsonData));

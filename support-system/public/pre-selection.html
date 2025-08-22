@@ -89,7 +89,7 @@
     async function loadDataset() {
       try {
         const studiesJSON = localStorage.getItem("uploadedJsonFile");
-        if (!studiesJSON) { alert("Nenhum arquivo JSON encontrado no localStorage."); return; }
+        if (!studiesJSON) { alert("No data found on review settings.");  window.location.href = "index.html"; }
         let studies = JSON.parse(studiesJSON);
 
         const selectedStudies = studies;
@@ -151,7 +151,6 @@
 
       } catch (error) {
         console.error("Erro ao carregar dados:", error);
-        alert("Erro inesperado ao carregar dados.");
       }
     }
 
