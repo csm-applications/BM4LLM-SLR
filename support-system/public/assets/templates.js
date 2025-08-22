@@ -18,9 +18,11 @@ IMPORTANT: Don't be lenient, is better to exclude a paper in this phase. But, re
 
 ${criteria}
 
-give me the result in CSV with the following columns: Criteria, Rate
+give me the result in CSV with ONLY the columns(Criteria, Rate) and the data for this columns, for instance:
 
-do not make a file, just a text formatted in csv
+Criteria,Rate
+IC1,6
+EC1,3
 `.trim(),
 
   huotala: (title, abstract, keywords, publication, date, criteriaText, instructions = '') => `

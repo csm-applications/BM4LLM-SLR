@@ -394,25 +394,25 @@
 
 
   // ============================
-// Criteria Management
-// ============================
+  // Criteria Management
+  // ============================
 
-// Generic function used by both inclusion and exclusion criteria
-function addCriteria(containerId) {
-  const container = document.getElementById(containerId);
-  const placeholder =
-    containerId === "inclusionCriteria"
-      ? "Inclusion Criterion"
-      : "Exclusion Criterion";
+  // Generic function used by both inclusion and exclusion criteria
+  function addCriteria(containerId) {
+    const container = document.getElementById(containerId);
+    const placeholder =
+      containerId === "inclusionCriteria"
+        ? "Inclusion Criterion"
+        : "Exclusion Criterion";
 
-  const input = document.createElement("input");
-  input.type = "text";
-  input.className = "form-control mb-2";
-  input.placeholder = placeholder;
-  input.required = true;
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "form-control mb-2";
+    input.placeholder = placeholder;
+    input.required = true;
 
-  container.appendChild(input);
-}
+    container.appendChild(input);
+  }
 
   // ============================
   // Data Handling
@@ -447,8 +447,8 @@ function addCriteria(containerId) {
   // ============================
 
   function buildCriteriaText(inclusion, exclusion) {
-    const inc = inclusion.map(c => `- IC: ${c}`);
-    const exc = exclusion.map(c => `- EC: ${c}`);
+    const inc = inclusion.map((c, i) => `- IC${i + 1}: ${c}`);
+    const exc = exclusion.map((c, i) => `- EC${i + 1}: ${c}`);
     return [...inc, ...exc].join("\n");
   }
 

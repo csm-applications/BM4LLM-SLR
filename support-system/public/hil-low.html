@@ -4,56 +4,12 @@
 <head>
   <meta charset="UTF-8" />
   <title>Step 4 – LLM Re-Evaluation (Low Confidence)</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/style.css" />
-  <script src="assets/templates.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <div id="imports"></div>
 </head>
 
 <body class="bg-light" style="height: 100vh;">
-
-  <!-- Sidebar Offcanvas -->
-  <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="sidebar" aria-labelledby="sidebarLabel">
-    <div class="offcanvas-header">
-      <h5 class="offcanvas-title" id="sidebarLabel"><a style="text-decoration: none; color: white;"
-          href="index.html"> BM4LLM-SLR </a></h5>
-      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body">
-      <ul class="nav flex-column">
-
-        
-        
-
-        <li class="nav-item text-white-50 fw-bold mt-4">Configuration</li>
-        <li class="nav-item"><a class="nav-link text-white" href="questionnaire.html">Participant Profile</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="preferences.html">Run Setup</a></li>
-
-        <li class="nav-item text-white-50 fw-bold mt-4">Pre-Selection Phase</li>
-        <li class="nav-item"><a class="nav-link text-white" href="experimentation.html">LLM-Assisted Review</a></li>
-
-        <li class="nav-item text-white-50 fw-bold mt-4">Looping Phase</li>
-        <li class="nav-item"><a class="nav-link text-white" href="hil-confidence.html">Start Looping</a></li>
-
-        <li class="nav-item text-white-50 fw-bold mt-4">Results</li>
-        <li class="nav-item"><a class="nav-link text-white active" href="finalReport.html">Final Report</a></li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- Top Navbar -->
-  <nav class="navbar bg-dark text-white">
-    <div class="container-fluid">
-      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar"
-        aria-controls="sidebar">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <span class="navbar-brand mb-0 h1 text-white">
-  <a style="text-decoration: none; color: white;" href="login-management.html">
-    <i class="fa fa-user"></i>
-  </a>
-</span>
-    </div>
-  </nav>
+  <div id="header"></div>
 
   <div class="container py-5">
     <div class="row justify-content-center">
@@ -65,8 +21,6 @@
     </div>
   </div>
 
-  <!-- Bootstrap Bundle -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
 
@@ -225,5 +179,10 @@
     window.addEventListener("DOMContentLoaded", loadAndRender);
   </script>
 </body>
+
+<script>
+  $("#imports").load("components/imports.html");
+  $("#header").load("components/header.html");
+</script>
 
 </html>
