@@ -136,12 +136,12 @@
       if (validExclusionCriteria.length === 0) {
         exclusionPass = true;
       } else if (exclusionMode === 'all') {
-        exclusionPass = validExclusionCriteria.every(c => output[c] <= config[c]);
+        exclusionPass = validExclusionCriteria.every(c => output[c] >= config[c]);
       } else if (exclusionMode === 'one') {
-        exclusionPass = validExclusionCriteria.some(c => output[c] <= config[c]);
+        exclusionPass = validExclusionCriteria.some(c => output[c] >= config[c]);
       }
 
-      return inclusionPass && exclusionPass;
+      return inclusionPass && !exclusionPass;
     }
 
     function updateDisplay() {
@@ -267,7 +267,7 @@
       zip.generateAsync({ type: "blob" }).then(content => {
         const a = document.createElement("a");
         a.href = URL.createObjectURL(content);
-        a.download = "output-assets.zip";
+        a.download = "first_llm_screnning_assets.zip";
         a.click();
         URL.revokeObjectURL(a.href);
       });
