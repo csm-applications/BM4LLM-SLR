@@ -32,6 +32,8 @@
       opacity: 0.6;
     }
   </style>
+
+
 </head>
 
 
@@ -242,7 +244,7 @@
             <h3 class="section-title">📂 Upload JSON File</h3>
 
             <div id="dropZone" class="border border-2 border-dashed rounded p-4 text-center bg-white">
-              <p class="mb-2">Arraste e solte o arquivo .json aqui</p>
+              <p class="mb-2">Arraste e solte o arquivo .bib aqui</p>
               <p class="text-muted">ou</p>
               <input type="file" id="jsonFileInput" accept=".json" class="d-none">
               <button type="button" class="btn btn-outline-primary"
@@ -568,30 +570,39 @@
     dropZone.classList.remove("bg-light");
   });
 
-  // Ao soltar arquivo
+  // Aceitar JSON ou BIB
   dropZone.addEventListener("drop", (e) => {
     e.preventDefault();
     dropZone.classList.remove("bg-light");
     const file = e.dataTransfer.files[0];
-    if (file && file.name.endsWith(".json")) {
-      handleFile(file);
+    if (!file) return;
+
+    if (file.name.endsWith(".json")) {
+      handleJsonFile(file);
+    } else if (file.name.endsWith(".bib")) {
+      handleBibFile(file);
     } else {
-      alert("Por favor selecione um arquivo .json válido.");
+      alert("Por favor selecione um arquivo .json ou .bib válido.");
     }
   });
 
-  // Ao selecionar via clique
   fileInput.addEventListener("change", (e) => {
     const file = e.target.files[0];
-    if (file && file.name.endsWith(".json")) {
-      handleFile(file);
+    if (!file) return;
+
+    if (file.name.endsWith(".json")) {
+      handleJsonFile(file);
+    } else if (file.name.endsWith(".bib")) {
+      handleBibFile(file);
     } else {
-      alert("Por favor selecione um arquivo .json válido.");
+      alert("Por favor selecione um arquivo .json ou .bib válido.");
     }
   });
 
-  // Função para salvar no localStorage
-  function handleFile(file) {
+  // -----------------------------
+  // Funções de tratamento
+  // -----------------------------
+  function handleJsonFile(file) {
     const reader = new FileReader();
     reader.onload = function (event) {
       try {
@@ -605,6 +616,93 @@
     };
     reader.readAsText(file);
   }
+
+  // Conversão básica de .bib para JSON com validação
+  function handleBibFile(file) {
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      try {
+        const bibText = event.target.result;
+        let jsonData = bibToJson(bibText); // converte para JSON
+
+        // Remove entradas inválidas
+        jsonData = jsonData.filter(entry => entry.ID !== "unknown" && entry.ENTRYTYPE !== "unknown");
+
+        if (jsonData.length === 0) {
+          alert("Nenhuma entrada válida encontrada no arquivo .bib.");
+          return;
+        }
+
+        localStorage.setItem("uploadedJsonFile", JSON.stringify(jsonData));
+        localStorage.setItem("uploadedJsonFileName", file.name);
+        fileNameDisplay.textContent = "Arquivo carregado: " + file.name + " (convertido de .bib)";
+      } catch (err) {
+        alert("O arquivo .bib não pôde ser convertido.");
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function bibToJson(bibText) {
+    const entries = bibText.split(/@/).filter(Boolean);
+    return entries.map(entry => {
+      const typeMatch = entry.match(/^(\w+){([^,]+),/);
+      const type = typeMatch ? typeMatch[1] : "unknown";
+      const id = typeMatch ? typeMatch[2] : "unknown";
+      const fields = {};
+      const fieldRegex = /(\w+)\s*=\s*[{"]([^}"]+)[}"]/g;
+      let match;
+      while ((match = fieldRegex.exec(entry)) !== null) {
+        fields[match[1]] = match[2];
+      }
+      return { ID: id, ENTRYTYPE: type, ...fields };
+    });
+  }
+
+
+  // Função para criar um input com botão de exclusão
+  function createCriteriaInput(value = "", placeholder = "") {
+    const wrapper = document.createElement("div");
+    wrapper.className = "d-flex mb-2 align-items-center";
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "form-control me-2";
+    input.required = true;
+    input.value = value;
+    input.placeholder = placeholder;
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.type = "button";
+    deleteBtn.className = "btn btn-outline-danger btn-sm";
+    deleteBtn.innerHTML = "🗑️";
+    deleteBtn.onclick = () => wrapper.remove();
+
+    wrapper.appendChild(input);
+    wrapper.appendChild(deleteBtn);
+
+    return wrapper;
+  }
+
+  // Atualiza a função setCriteria para usar createCriteriaInput
+  function setCriteria(containerId, criteria = [], placeholder = "") {
+    const container = document.getElementById(containerId);
+    container.innerHTML = "";
+    criteria.forEach(c => container.appendChild(createCriteriaInput(c, placeholder)));
+  }
+
+  // Atualiza a função addCriteria para usar createCriteriaInput
+  function addCriteria(containerId) {
+    const placeholder =
+      containerId === "inclusionCriteria"
+        ? "Inclusion Criterion"
+        : "Exclusion Criterion";
+
+    const container = document.getElementById(containerId);
+    container.appendChild(createCriteriaInput("", placeholder));
+  }
+
+
 
 </script>
 <script>

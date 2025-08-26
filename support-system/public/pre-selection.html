@@ -37,6 +37,7 @@
   <script>
     // Função que dispara o envio em sequência
     async function generateAllResponses() {
+      const startTime = performance.now(); // ⏱️ Start timer
 
       const cards = document.querySelectorAll('.card');
       for (let i = 0; i < cards.length; i++) {
@@ -49,9 +50,17 @@
 
         // Aguarda terminar a chamada antes de ir para o próximo
         await sendPromptSequential(promptId, textareaId);
-
       }
-      alert("Todas as respostas foram geradas!");
+
+      const endTime = performance.now(); // ⏱️ End timer
+      const elapsedMs = endTime - startTime;
+
+      // Converte para minutos e segundos
+      const totalSeconds = Math.floor(elapsedMs / 1000);
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+
+      alert(`✅ Todas as respostas foram geradas!\n⏱️ Tempo total: ${minutes}m ${seconds}s`);
     }
 
     // Versão adaptada do sendPrompt para retornar Promise

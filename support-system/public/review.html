@@ -91,8 +91,8 @@
 
         <!-- Actions -->
         <div class="my-4 text-end">
-          <button id="download-btn" class="btn btn-success">Download Assets</button>
-          <a class="btn btn-primary" href="hil-confidence.html">Continue...</a>
+          <button id="download-btn" class="btn btn-success">Download pre-screening assets</button>
+          <a class="btn btn-primary" href="hil-confidence.html">Go to Phase 2</a>
         </div>
 
       </div>
@@ -120,9 +120,10 @@
       const { inclusionMode, exclusionMode } = getMatchMode();
       const inclusionCriteria = Object.keys(config).filter(k => k.startsWith('IC'));
       const exclusionCriteria = Object.keys(config).filter(k => k.startsWith('EC'));
-      const validInclusionCriteria = inclusionCriteria.filter(c => output[c] !== -1 && output[c] !== undefined);
-      const validExclusionCriteria = exclusionCriteria.filter(c => output[c] !== -1 && output[c] !== undefined);
+      const validInclusionCriteria = inclusionCriteria.filter(c => output[c] !== undefined);
+      const validExclusionCriteria = exclusionCriteria.filter(c => output[c] !== undefined);
 
+      // Avaliar inclusão
       let inclusionPass = false;
       if (validInclusionCriteria.length === 0) {
         inclusionPass = true;
@@ -132,17 +133,49 @@
         inclusionPass = validInclusionCriteria.some(c => output[c] >= config[c]);
       }
 
+      // Avaliar exclusão
       let exclusionPass = false;
       if (validExclusionCriteria.length === 0) {
-        exclusionPass = true;
+        exclusionPass = false;
       } else if (exclusionMode === 'all') {
         exclusionPass = validExclusionCriteria.every(c => output[c] >= config[c]);
       } else if (exclusionMode === 'one') {
         exclusionPass = validExclusionCriteria.some(c => output[c] >= config[c]);
       }
 
+      // --- NOVAS REGRAS ---
+
+      // Regra 1: único critério de inclusão = -1 e nenhum exclusão satisfeito → inclui
+      if (
+        inclusionCriteria.length === 1 &&
+        output[inclusionCriteria[0]] === -1 &&
+        !exclusionPass
+      ) {
+        return true;
+      }
+
+      // Regra 2: passou inclusão e único critério de exclusão = -1 → inclui
+      if (
+        inclusionPass &&
+        exclusionCriteria.length === 1 &&
+        output[exclusionCriteria[0]] === -1
+      ) {
+        return true;
+      }
+
+      // Regra 3: inclusão = -1 e exclusão fraca → exclui
+      if (
+        inclusionCriteria.some(c => output[c] === -1) &&
+        exclusionCriteria.some(c => output[c] < config[c]) // exclusão fraca
+      ) {
+        return false;
+      }
+
+      // Resultado padrão
       return inclusionPass && !exclusionPass;
     }
+
+
 
     function updateDisplay() {
       const config = getConfidenceConfig();
