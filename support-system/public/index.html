@@ -20,21 +20,18 @@
     <div class="row justify-content-center">
       <div class="col-md-10 col-lg-8 p-5 bg-white rounded shadow-sm">
 
-        <h2 class="mb-4">BM4LLM-SLR</h2>
-
-        <h5 class="mb-4">Bias Mitigation for LLM-Assisted Systematic Literature Reviews</h5>
+        <h5 class="mb-4"><u>B</u>ias <u>M</u>itigation for <u>LLM</u>-Assisted <u>S</u>ystematic <u>L</u>iterature <u>R</u>eviews</h5>
 
         <!-- Short description -->
-        <p>
+        <p style="text-align: justify;">
           BM4LLM-SLR is a system designed to support researchers in the study selection phase of Systematic Literature
           Reviews (SLRs), making the use of Large Language Models (LLMs) more reliable and transparent.
         </p>
 
         <!-- Why section -->
         <h4 class="mt-5">Why using BM4LLM-SLR?</h4>
-        <p>
-          Systematic Literature Reviews are essential for building scientific evidence, but they are labor-intensive and
-          error-prone. LLMs have the potential to assist, but they may introduce bias or inconsistencies if used alone.
+        <p style="text-align: justify;">
+          Systematic Literature Reviews are essential for building scientific evidence, but they are labor-intensive. LLMs have the potential to assist, but they may introduce bias or inconsistencies if used alone.
           BM4LLM-SLR introduces an additional layer of bias mitigation, increasing trustworthiness through configurable
           confidence thresholds, reviewer involvement, and strictness controls.
         </p>
@@ -47,7 +44,7 @@
 
         <!-- FAQ Accordion -->
         <h4 class="mt-5">FAQ</h4>
-        <div class="accordion" id="faqAccordion">
+        <div class="accordion" style="text-align: justify;" id="faqAccordion">
 
           <div class="accordion-item">
             <h2 class="accordion-header" id="q1">
@@ -61,12 +58,8 @@
                 A systematic review is a structured methodology used to identify, evaluate, and synthesize studies on a
                 given topic, ensuring comprehensive and unbiased evidence gathering. In Software Engineering area this
                 method was adapted by Barbara A. Kitchenham. She wrote a technical report that became the base guideline
-                to SLR method (<a
-                  href="https://legacyfileshare.elsevier.com/promis_misc/525444systematicreviewsguide.pdf">Click
-                  here</a>).</div>
-
-
-
+                to SLR method - <a
+                  href="https://legacyfileshare.elsevier.com/promis_misc/525444systematicreviewsguide.pdf">access the reference here</a>.</div>
 
             </div>
           </div>
@@ -80,8 +73,7 @@
             </h2>
             <div id="a2" class="accordion-collapse collapse" aria-labelledby="q2" data-bs-parent="#faqAccordion">
               <div class="accordion-body">
-                Yes, BM4LLM-SLR can support both systematic reviews and systematic mappings by assisting in study
-                selection.
+                Yes, the process for studies selection are very similar, hence, BM4LLM-SLR can (for now) support both systematic reviews and systematic mappings.
               </div>
             </div>
           </div>
@@ -95,8 +87,7 @@
             </h2>
             <div id="a3" class="accordion-collapse collapse" aria-labelledby="q3" data-bs-parent="#faqAccordion">
               <div class="accordion-body">
-                BM4LLM-SLR includes a bias mitigation layer, allowing users to configure confidence levels, reviewer
-                involvement, and strictness. This reduces the risk of bias compared to raw LLM outputs.
+                Our proposal is not trust 100% in LLM decisions. Therefore, the main premisse of BM4LLM-SLR is to include human verification that ratifies the decisions. BM4LLM-SLR also includes a bias mitigation layer, allowing users to configure confidence levels, reviewer involvement, and strictness. This reduces the risk of bias compared to raw LLM outputs. Our recommendation is to always check the exclusions to not loose any important studies.
               </div>
             </div>
           </div>
@@ -120,12 +111,12 @@
             <h2 class="accordion-header" id="q5">
               <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a5"
                 aria-expanded="false" aria-controls="a5">
-                Is LLM integration automated?
+                This tool is integrated with LLMs?
               </button>
             </h2>
             <div id="a5" class="accordion-collapse collapse" aria-labelledby="q5" data-bs-parent="#faqAccordion">
               <div class="accordion-body">
-                Yes, once configured, the system automates interaction with LLMs, reducing manual intervention.
+                Integration with LLMs is still experimental in this version. We are actively improving the tool to enable full automation in the near future. If you want to use the Ollama environment, we recommend installing it locally or running it in a Docker container. Once set up, you can link it at the top of the page and send prompts to the model automatically.
               </div>
             </div>
           </div>
@@ -139,7 +130,7 @@
             </h2>
             <div id="a6" class="accordion-collapse collapse" aria-labelledby="q6" data-bs-parent="#faqAccordion">
               <div class="accordion-body">
-                Yes, BM4LLM-SLR is an experimental open-source tool and can be cited in your research. Please check our
+                Not yet, BM4LLM-SLR is its early stage of experimentation and soon will be published. Please check our
                 documentation for citation details.
               </div>
             </div>
@@ -154,8 +145,7 @@
             </h2>
             <div id="a7" class="accordion-collapse collapse" aria-labelledby="q7" data-bs-parent="#faqAccordion">
               <div class="accordion-body">
-                Currently, BM4LLM-SLR is independent. Integration with Parsifal or other SLR tools is under
-                consideration for future releases.
+                Partially, BM4LLM-SLR is independent, but we provide an importation tool that accepts xls and bib files that come from parsifal tool. A better integration with Parsifal or other SLR tools is under consideration for future releases.
               </div>
             </div>
           </div>
