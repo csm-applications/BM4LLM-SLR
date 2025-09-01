@@ -8,81 +8,29 @@
   <div id="imports"></div>
   <script src="assets/templates.js"></script>
   <style>
+    html,
     body {
-      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden; /* impede barra de rolagem do navegador */
       font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
     }
 
-    .table-responsive {
-      max-height: 70vh;
-      overflow-y: auto;
-    }
-
-    td.abstract-cell {
-      max-width: 350px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .drop-zone {
-      border: 2px dashed #ccc;
-      border-radius: 6px;
-      padding: 20px;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color 0.2s ease;
-      background-color: white;
-    }
-
-    .drop-zone.dragover {
-      border-color: #0d6efd;
-      background-color: #f0f8ff;
-    }
-
-    .drop-zone input {
-      display: none;
-    }
-
-    .file-name {
-      font-size: 0.9rem;
-      color: #555;
-      margin-top: 5px;
-    }
-
-    .container {
-      padding: 40px 20px;
+    #header {
+      height: 60px; /* exemplo, ajuste conforme seu header */
     }
 
     .form-wrapper {
-      width: 80%; /* ocupa 80% da largura da tela */
-      max-width: 1200px; /* limita largura máxima */
-      height: 80vh; /* altura da tela */
-      margin: 0 auto;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      width: 100%;
+      height: calc(100% - 60px); /* ocupa o restante abaixo do header */
     }
 
     .form-wrapper iframe {
       width: 100%;
       height: 100%;
       border: none;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 30px;
-      color: #333;
-    }
-
-    @media (max-width: 768px) {
-      .form-wrapper {
-        width: 95%; /* quase toda a tela em mobile */
-        height: 70vh;
-      }
     }
   </style>
 </head>
@@ -91,12 +39,10 @@
 
   <div id="header"></div>
 
-  <div class="container">
-    <div class="form-wrapper">
-      <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdf6sb-keXg71nUi2YW7a3PUYKUZ9Kh6G9570NHDlnjbUKE6A/viewform?embedded=true">
-        Carregando…
-      </iframe>
-    </div>
+  <div class="form-wrapper">
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdf6sb-keXg71nUi2YW7a3PUYKUZ9Kh6G9570NHDlnjbUKE6A/viewform?embedded=true">
+      Carregando…
+    </iframe>
   </div>
 
   <script>
@@ -105,5 +51,4 @@
   </script>
 
 </body>
-
 </html>
