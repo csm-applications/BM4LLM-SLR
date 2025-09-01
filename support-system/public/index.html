@@ -9,18 +9,44 @@
   <div id="imports"></div>
 </head>
 
+<style>
+  .responsive-iframe {
+    position: relative;
+    padding-bottom: 56.25%;
+    /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+    background: #000;
+    /* optional */
+    border-radius: 8px;
+    /* optional */
+  }
+
+  .responsive-iframe iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+</style>
+
 
 
 <body class="bg-light" style="height: 100vh;">
 
- <div id="header"></div>
+  <div id="header"></div>
 
   <!-- Main Content -->
   <div class="container text-center mt-5">
     <div class="row justify-content-center">
       <div class="col-md-10 col-lg-8 p-5 bg-white rounded shadow-sm">
 
-        <h5 class="mb-4"><u>B</u>ias <u>M</u>itigation for <u>LLM</u>-Assisted <u>S</u>ystematic <u>L</u>iterature <u>R</u>eviews</h5>
+        <h5 class="mb-4"><u>B</u>ias <u>M</u>itigation for <u>LLM</u>-Assisted <u>S</u>ystematic <u>L</u>iterature
+          <u>R</u>eviews
+        </h5>
 
         <!-- Short description -->
         <p style="text-align: justify;">
@@ -31,16 +57,30 @@
         <!-- Why section -->
         <h4 class="mt-5">Why using BM4LLM-SLR?</h4>
         <p style="text-align: justify;">
-          Systematic Literature Reviews are essential for building scientific evidence, but they are labor-intensive. LLMs have the potential to assist, but they may introduce bias or inconsistencies if used alone.
+          Systematic Literature Reviews are essential for building scientific evidence, but they are labor-intensive.
+          LLMs have the potential to assist, but they may introduce bias or inconsistencies if used alone.
           BM4LLM-SLR introduces an additional layer of bias mitigation, increasing trustworthiness through configurable
           confidence thresholds, reviewer involvement, and strictness controls.
         </p>
 
-        <!-- Model Figure -->
-        <div class="text-center mb-4">
-          <img src="assets/images/BM4LLM-SLR.png" alt="Method Diagram" class="img-fluid rounded border"
-            style="max-height: 900px;">
+        <div class="container my-4">
+          <h4 class="mt-5">Supplementary material</h4>
+          <p>
+            Access the slides presentation
+            <a href="https://docs.google.com/presentation/d/e/2PACX-1vSUV05pu5nJQScEhYIZq6JmCk8ELu7PfYdQUrBaSiZv7BkSWxisAkt6FxbXly_fcQ/pub?start=false&loop=true&delayms=30000"
+              target="_blank">
+              here
+            </a>
+          </p>
+
+          <div class="responsive-iframe">
+            <iframe
+              src="https://docs.google.com/presentation/d/e/2PACX-1vSUV05pu5nJQScEhYIZq6JmCk8ELu7PfYdQUrBaSiZv7BkSWxisAkt6FxbXly_fcQ/pubembed?start=false&loop=false&delayms=3000"
+              frameborder="0" allowfullscreen mozallowfullscreen webkitallowfullscreen>
+            </iframe>
+          </div>
         </div>
+
 
         <!-- FAQ Accordion -->
         <h4 class="mt-5">FAQ</h4>
@@ -59,7 +99,8 @@
                 given topic, ensuring comprehensive and unbiased evidence gathering. In Software Engineering area this
                 method was adapted by Barbara A. Kitchenham. She wrote a technical report that became the base guideline
                 to SLR method - <a
-                  href="https://legacyfileshare.elsevier.com/promis_misc/525444systematicreviewsguide.pdf">access the reference here</a>.</div>
+                  href="https://legacyfileshare.elsevier.com/promis_misc/525444systematicreviewsguide.pdf">access the
+                  reference here</a>.</div>
 
             </div>
           </div>
@@ -73,7 +114,8 @@
             </h2>
             <div id="a2" class="accordion-collapse collapse" aria-labelledby="q2" data-bs-parent="#faqAccordion">
               <div class="accordion-body">
-                Yes, the process for studies selection are very similar, hence, BM4LLM-SLR can (for now) support both systematic reviews and systematic mappings.
+                Yes, the process for studies selection are very similar, hence, BM4LLM-SLR can (for now) support both
+                systematic reviews and systematic mappings.
               </div>
             </div>
           </div>
@@ -87,7 +129,22 @@
             </h2>
             <div id="a3" class="accordion-collapse collapse" aria-labelledby="q3" data-bs-parent="#faqAccordion">
               <div class="accordion-body">
-                Our proposal is not trust 100% in LLM decisions. Therefore, the main premisse of BM4LLM-SLR is to include human verification that ratifies the decisions. BM4LLM-SLR also includes a bias mitigation layer, allowing users to configure confidence levels, reviewer involvement, and strictness. This reduces the risk of bias compared to raw LLM outputs. Our recommendation is to always check the exclusions to not loose any important studies.
+                Our proposal is not trust 100% in LLM decisions. Therefore, the main premisse of BM4LLM-SLR is to
+                include human verification that ratifies the decisions. BM4LLM-SLR also includes a bias mitigation
+                layer, allowing users to configure confidence levels, reviewer involvement, and strictness. This reduces
+                the risk of bias compared to raw LLM outputs. Our recommendation is to always check the exclusions to
+                not loose any important studies.
+
+                <p>
+                  To increase our trust in LLM decisions, we need to apply bias mitigation actions. For this, BM4LLM-SLR
+                  could be used which the overall process is described below:
+                </p>
+
+                <!-- Model Figure -->
+                <div class="text-center mb-4">
+                  <img src="assets/images/BM4LLM-SLR.png" alt="Method Diagram" class="img-fluid rounded border"
+                    style="max-height: 900px;">
+                </div>
               </div>
             </div>
           </div>
@@ -116,7 +173,10 @@
             </h2>
             <div id="a5" class="accordion-collapse collapse" aria-labelledby="q5" data-bs-parent="#faqAccordion">
               <div class="accordion-body">
-                Integration with LLMs is still experimental in this version. We are actively improving the tool to enable full automation in the near future. If you want to use the Ollama environment, we recommend installing it locally or running it in a Docker container. Once set up, you can link it at the top of the page and send prompts to the model automatically.
+                Integration with LLMs is still experimental in this version. We are actively improving the tool to
+                enable full automation in the near future. If you want to use the Ollama environment, we recommend
+                installing it locally or running it in a Docker container. Once set up, you can link it at the top of
+                the page and send prompts to the model automatically.
               </div>
             </div>
           </div>
@@ -145,12 +205,16 @@
             </h2>
             <div id="a7" class="accordion-collapse collapse" aria-labelledby="q7" data-bs-parent="#faqAccordion">
               <div class="accordion-body">
-                Partially, BM4LLM-SLR is independent, but we provide an importation tool that accepts xls and bib files that come from parsifal tool. A better integration with Parsifal or other SLR tools is under consideration for future releases.
+                Partially, BM4LLM-SLR is independent, but we provide an importation tool that accepts xls and bib files
+                that come from parsifal tool. A better integration with Parsifal or other SLR tools is under
+                consideration for future releases.
               </div>
             </div>
           </div>
 
         </div>
+
+
 
         <div class="container my-4">
           <h3 class="mb-3">Systematic Literature Reviews Guidelines</h3>
@@ -169,7 +233,7 @@
                 <td>Guidelines for Performing Systematic Literature Reviews in Software Engineering (EBSE-2007-01)</td>
                 <td>2007</td>
                 <td><a href="https://legacyfileshare.elsevier.com/promis_misc/525444systematicreviewsguide.pdf"
-                    target="_blank" class="btn btn-sm btn-primary">PDF</a></td>
+                    target="_blank" class="btn btn-sm btn-primary">Access</a></td>
               </tr>
               <tr>
                 <td>Brereton, P.; Kitchenham, B.; Budgen, D.; Turner, M.; Khalil, M.</td>
@@ -177,7 +241,7 @@
                   Domain</td>
                 <td>2007</td>
                 <td><a href="https://www.sciencedirect.com/science/article/pii/S016412120600197X" target="_blank"
-                    class="btn btn-sm btn-primary">Publisher</a></td>
+                    class="btn btn-sm btn-primary">Access</a></td>
               </tr>
               <tr>
                 <td>Wohlin, C.</td>
@@ -186,7 +250,7 @@
                 <td>2014</td>
                 <td>
                   <a href="https://dl.acm.org/doi/10.1145/2601248.2601268" target="_blank"
-                    class="btn btn-sm btn-primary me-1">ACM DL</a>
+                    class="btn btn-sm btn-primary me-1">Access</a>
                 </td>
               </tr>
               <tr>
@@ -194,7 +258,7 @@
                 <td>Guidelines for the Search Strategy to Update Systematic Literature Reviews in Software Engineering
                 </td>
                 <td>2020</td>
-                <td><a href="https://arxiv.org/abs/2006.05542" target="_blank" class="btn btn-sm btn-primary">arXiv</a>
+                <td><a href="https://arxiv.org/abs/2006.05542" target="_blank" class="btn btn-sm btn-primary">Access</a>
                 </td>
               </tr>
               <tr>
@@ -203,7 +267,7 @@
                 <td>2015</td>
                 <td><a
                     href="https://www.taylorfrancis.com/books/edit/10.1201/b19467/evidence-based-software-engineering-systematic-reviews-barbara-ann-kitchenham-david-budgen-pearl-brereton"
-                    target="_blank" class="btn btn-sm btn-primary">Publisher</a></td>
+                    target="_blank" class="btn btn-sm btn-primary">Access</a></td>
               </tr>
             </tbody>
           </table>
@@ -220,7 +284,7 @@
     </div>
   </div>
 
-  
+
 </body>
 
 <script>
