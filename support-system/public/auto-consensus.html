@@ -263,22 +263,28 @@
       const excluded = studies.filter(s => s.userDecision === "Exclude");
 
       const zip = new JSZip();
+
+      // 🔹 Recuperar studyMetadata do localStorage (se existir)
+      const studyMetadata = JSON.parse(localStorage.getItem("studyMetadata") || "{}");
+
+      // 🔹 Montar metadata completo
       const metadata = {
         config,
         inclusionCriteria: preferencesData.inclusionCriteria || [],
-        exclusionCriteria: preferencesData.exclusionCriteria || []
+        exclusionCriteria: preferencesData.exclusionCriteria || [],
+        studyInfo: studyMetadata   // <-- agora incluído
       };
 
       zip.file("metadata.json", JSON.stringify(metadata, null, 2));
       zip.file("included.json", JSON.stringify(included, null, 2));
       zip.file("excluded.json", JSON.stringify(excluded, null, 2));
 
-      localStorage.setItem("finalDecision", {
-        "metadata": JSON.stringify(metadata, null, 2),
-        "included": JSON.stringify(included, null, 2),
-        "excluded": JSON.stringify(excluded, null, 2)
-      })
-
+      // 🔹 Também salvar no localStorage (com studyInfo dentro)
+      localStorage.setItem("finalDecision", JSON.stringify({
+        metadata,
+        included,
+        excluded
+      }, null, 2));
 
       zip.generateAsync({ type: "blob" }).then(content => {
         const a = document.createElement("a");
@@ -288,6 +294,7 @@
         URL.revokeObjectURL(a.href);
       });
     });
+
 
     // ---- Inicialização ----
     window.addEventListener("DOMContentLoaded", () => {

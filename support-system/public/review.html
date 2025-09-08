@@ -289,8 +289,17 @@
       const fullRunStudies = JSON.parse(localStorage.getItem("experimentAnswers") || "[]");
       const fullCriteria = JSON.parse(localStorage.getItem("fullCriteria") || "{}");
 
+      // 🔹 Recuperar o objeto extra
+      const studyMetadata = JSON.parse(localStorage.getItem("studyMetadata") || "{}");
+
       const zip = new JSZip();
-      const metadata = { config, fullcriteria: fullCriteria };
+
+      // 🔹 Agora incluir tudo no metadata
+      const metadata = {
+        config,
+        fullcriteria: fullCriteria,
+        studyInfo: studyMetadata   // <-- objeto que você mostrou
+      };
 
       zip.file("metadata.json", JSON.stringify(metadata, null, 2));
       zip.file("included.json", JSON.stringify(includedStudies, null, 2));
@@ -305,6 +314,7 @@
         URL.revokeObjectURL(a.href);
       });
     });
+
 
     document.querySelectorAll('input[name="inclusion-mode"], input[name="exclusion-mode"]').forEach(radio => {
       radio.addEventListener('change', updateDisplay);

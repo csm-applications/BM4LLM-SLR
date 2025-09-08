@@ -350,10 +350,16 @@
             });
 
             const zip = new JSZip();
+
+            // 🔹 Recuperar studyMetadata (se existir)
+            const studyMetadata = JSON.parse(localStorage.getItem("studyMetadata") || "{}");
+
+            // 🔹 Montar metadata incluindo config, critérios e studyMetadata
             const metadata = {
                 config,
                 inclusionCriteria: preferencesData.inclusionCriteria || [],
-                exclusionCriteria: preferencesData.exclusionCriteria || []
+                exclusionCriteria: preferencesData.exclusionCriteria || [],
+                studyInfo: studyMetadata   // <-- agora incluído também
             };
 
             zip.file("metadata.json", JSON.stringify(metadata, null, 2));
@@ -368,6 +374,7 @@
                 URL.revokeObjectURL(a.href);
             });
         });
+
     </script>
 </body>
 
