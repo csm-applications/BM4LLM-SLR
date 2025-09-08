@@ -63,11 +63,11 @@
               <h5>Exclusion Criteria</h5>
               <div class="mb-2">
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="exclusion-mode" id="exc-all" value="all" checked>
+                  <input class="form-check-input" type="radio" name="exclusion-mode" id="exc-all" value="all" >
                   <label class="form-check-label" for="exc-all">Match All</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="exclusion-mode" id="exc-one" value="one">
+                  <input class="form-check-input" type="radio" name="exclusion-mode" id="exc-one" value="one" checked>
                   <label class="form-check-label" for="exc-one">Match One</label>
                 </div>
               </div>
@@ -176,7 +176,7 @@
         input.name = `IC${idx + 1}`;
         input.min = 1;
         input.max = 7;
-        input.value = 4;
+        input.value = 6;
 
         const label = document.createElement('label');
         label.innerText = crit;
@@ -193,7 +193,7 @@
         input.name = `EC${idx + 1}`;
         input.min = 1;
         input.max = 7;
-        input.value = 2;
+        input.value = 6;
 
         const label = document.createElement('label');
         label.innerText = crit;
