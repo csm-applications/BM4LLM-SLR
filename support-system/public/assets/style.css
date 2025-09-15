@@ -1,62 +1,67 @@
-
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
 
- .breadcrumb-step .breadcrumb-item {
-    position: relative;
-    padding: 0.5rem 1rem;
-    background-color: #f8f9fa;
-    border-radius: 20px;
-    margin-right: 0.5rem;
-    font-weight: 500;
-    color: #6c757d;
-  }
+.breadcrumb-step .breadcrumb-item {
+  position: relative;
+  padding: 0.5rem 1rem;
+  background-color: #f8f9fa;
+  border-radius: 20px;
+  margin-right: 0.5rem;
+  font-weight: 500;
+  color: #6c757d;
+}
 
-   .navbar-toggler-icon {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-  }
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
 
-  .breadcrumb-step .breadcrumb-item.active {
-    background-color: #0d6efd;
-    color: #fff;
-  }
+.breadcrumb-step .breadcrumb-item.active {
+  background-color: #0d6efd;
+  color: #fff;
+}
 
-  .breadcrumb-step {
-    background-color: transparent;
-    padding: 0;
-    margin-bottom: 2rem;
-  }
+.breadcrumb-step {
+  background-color: transparent;
+  padding: 0;
+  margin-bottom: 2rem;
+}
 
-  /* Torna as labels mais escuras */
-label.form-label, .form-check-label {
-    color: #212529; /* cor padrão do texto */
-    font-weight: 500;
+/* Torna as labels mais escuras */
+label.form-label,
+.form-check-label {
+  color: #212529;
+  /* cor padrão do texto */
+  font-weight: 500;
 }
 
 /* Melhora a visibilidade dos inputs */
 .form-control {
-    border: 1px solid #495057;
-    color: #212529;
-    background-color: #fff;
+  border: 1px solid #495057;
+  color: #212529;
+  background-color: #fff;
 }
 
 /* Destaca os checkboxes e radio buttons */
 .form-check-input {
-    border: 1px solid #495057;
-    width: 1.1em;
-    height: 1.1em;
+  border: 1px solid #495057;
+  width: 1.1em;
+  height: 1.1em;
 }
 
 /* Quando ativos */
 .form-check-input:checked {
-    background-color: #0d6efd;
-    border-color: #0d6efd;
+  background-color: #0d6efd;
+  border-color: #0d6efd;
 }
 
 /* Melhora o foco nos inputs */
-.form-control:focus, .form-check-input:focus {
-    border-color: #0d6efd;
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+.form-control:focus,
+.form-check-input:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
 }

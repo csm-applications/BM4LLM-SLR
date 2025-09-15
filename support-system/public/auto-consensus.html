@@ -2,343 +2,331 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <title>Consensus Review</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="assets/style.css" />
-    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-    <style>
-        .card.included {
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-        }
+  <meta charset="UTF-8" />
+  <title>Auto-Consensus</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <div id="imports"></div>
+  <script src="assets/templates.js"></script>
+  <style>
+    .card.included {
+      background-color: #d4edda;
+      border-color: #c3e6cb;
+    }
 
-        .card.excluded {
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-        }
+    .card.excluded {
+      background-color: #f8d7da;
+      border-color: #f5c6cb;
+    }
 
-        label {
-            font-weight: 600;
-            margin-top: 0.5rem;
-            display: block;
-        }
+    label {
+      font-weight: 600;
+      margin-top: 0.5rem;
+      display: block;
+    }
 
-        input[type="number"] {
-            max-width: 80px;
-        }
-    </style>
+    input[type="number"] {
+      max-width: 80px;
+    }
+  </style>
 </head>
 
 <body class="bg-light">
-    <!-- Sidebar Offcanvas -->
-    <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="sidebar" aria-labelledby="sidebarLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="sidebarLabel"><a style="text-decoration: none; color: white;"
-                    href="login-management.html"> BM4LLM-SLR </a></h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
-                aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body">
-            <ul class="nav flex-column">
-                <li class="nav-item text-white-50 fw-bold mt-2">Welcome</li>
-                <li class="nav-item"><a class="nav-link text-white" href="index.html">Introduction</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="instructions.html">Instructions</a></li>
+  <div id="header"></div>
 
-                <li class="nav-item text-white-50 fw-bold mt-4">Configuration</li>
-                <li class="nav-item"><a class="nav-link text-white" href="questionnaire.html">Participant Profile</a>
-                </li>
-                <li class="nav-item"><a class="nav-link text-white" href="preferences.html">Run Setup</a></li>
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-12 bg-white p-4 rounded shadow-sm">
+        <h2 class="mb-4 text-center">Auto-Consensus Review</h2>
 
-                <li class="nav-item text-white-50 fw-bold mt-4">Pre-Selection Phase</li>
-                <li class="nav-item"><a class="nav-link text-white" href="experimentation.html">LLM-Assisted Review</a></li>
+        <!-- Confidence Settings -->
+        <div class="card mb-4 p-3">
+          <h4 class="card-title mb-3">Confidence Level Settings</h4>
+          <form id="confidence-form" class="row row-cols-1 row-cols-md-2 g-3">
 
-                <li class="nav-item text-white-50 fw-bold mt-4">Looping Phase</li>
-                <li class="nav-item"><a class="nav-link text-white" href="hil-confidence.html">Start Looping</a></li>
-
-                <li class="nav-item text-white-50 fw-bold mt-4">Results</li>
-                <li class="nav-item"><a class="nav-link text-white active" href="finalReport.html">Final Report</a></li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- Top Navbar -->
-    <nav class="navbar bg-dark text-white">
-        <div class="container-fluid">
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar"
-                aria-controls="sidebar">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <span class="navbar-brand mb-0 h1 text-white"><a style="text-decoration: none; color: white;"
-                    href="login-management.html"> BM4LLM-SLR </a></span>
-        </div>
-    </nav>
-
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-12 bg-white p-4 rounded shadow-sm">
-                <h2 class="mb-4 text-center">Consensus Review</h2>
-
-                <!-- Confidence Settings -->
-                <div class="card mb-4 p-3">
-                    <h4 class="card-title mb-3">Confidence Level Settings</h4>
-                    <form id="confidence-form" class="row row-cols-1 row-cols-md-2 g-3">
-
-                        <div class="col">
-                            <h5>Inclusion Criteria</h5>
-                            <div class="mb-2">
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="inclusion-mode" id="inc-all"
-                                        value="all" checked>
-                                    <label class="form-check-label" for="inc-all">Match All</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="inclusion-mode" id="inc-one"
-                                        value="one">
-                                    <label class="form-check-label" for="inc-one">Match One</label>
-                                </div>
-                            </div>
-                            <div id="inclusion-fields"></div>
-                        </div>
-
-                        <div class="col">
-                            <h5>Exclusion Criteria</h5>
-                            <div class="mb-2">
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="exclusion-mode" id="exc-all"
-                                        value="all" checked>
-                                    <label class="form-check-label" for="exc-all">Match All</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="exclusion-mode" id="exc-one"
-                                        value="one">
-                                    <label class="form-check-label" for="exc-one">Match One</label>
-                                </div>
-                            </div>
-                            <div id="exclusion-fields"></div>
-                        </div>
-
-                    </form>
+            <div class="col">
+              <h5>Inclusion Criteria</h5>
+              <div class="mb-2">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="inclusion-mode" id="inc-all" value="all" checked>
+                  <label class="form-check-label" for="inc-all">Match All</label>
                 </div>
-
-                <div id="summary" class="alert alert-info mb-4">Loading...</div>
-                <div id="cardsContainer"></div>
-                <button id="download-btn" class="btn btn-success mt-4">Download Results</button>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="inclusion-mode" id="inc-one" value="one">
+                  <label class="form-check-label" for="inc-one">Match One</label>
+                </div>
+              </div>
+              <div id="inclusion-fields"></div>
             </div>
+
+            <div class="col">
+              <h5>Exclusion Criteria</h5>
+              <div class="mb-2">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="exclusion-mode" id="exc-all" value="all" >
+                  <label class="form-check-label" for="exc-all">Match All</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="exclusion-mode" id="exc-one" value="one" checked>
+                  <label class="form-check-label" for="exc-one">Match One</label>
+                </div>
+              </div>
+              <div id="exclusion-fields"></div>
+            </div>
+
+          </form>
         </div>
+
+        <div id="summary" class="alert alert-info mb-4">Loading...</div>
+        <div id="cardsContainer"></div>
+        <button id="download-btn" class="btn btn-success mt-4">Finish Consensus</button>
+      </div>
     </div>
+  </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    let studies = [];
+    let preferencesData = {};
 
-    <script>
-        let excludedStudies = [];
+    // ---- Helpers ----
+    function parseCSVDecision(csvText) {
+      if (!csvText || typeof csvText !== "string") return {};
+      const lines = csvText.split("\n").map(l => l.trim()).filter(l => l && !l.startsWith("Criteria"));
+      const obj = {};
+      lines.forEach(line => {
+        const [crit, val] = line.split(",").map(x => x.trim());
+        obj[crit] = isNaN(parseInt(val)) ? -1 : parseInt(val);
+      });
+      return obj;
+    }
 
-        function calculateConsensus(first, second, third) {
-            const values = [first, second, third].filter(v => v !== -1);
-            if (values.length === 0) return -1;
-            if (values.length === 1) return values[0];
-            if (values.length === 2) return Math.max(...values);
-            if (values[0] === values[1]) return values[0];
-            if (values[0] === values[2]) return values[0];
-            if (values[1] === values[2]) return values[1];
-            return values.sort((a, b) => a - b)[1];
-        }
+    // ---- Consenso ----
+    function calculateConsensus(...values) {
+      const valid = values.filter(v => v !== -1 && v !== undefined);
+      if (valid.length === 0) return -1;
+      if (valid.length === 1) return valid[0];
+      if (valid.length === 2) return Math.max(...valid);
+      valid.sort((a, b) => a - b);
+      return valid[Math.floor(valid.length / 2)];
+    }
 
-        function computeConsensusValues(study) {
-            const result = {};
-            const criteria = Object.keys(study.firstModelDecision || {});
-            for (const key of criteria) {
-                const first = study.firstModelDecision[key];
-                const second = study.secondModelOpinion?.[key];
-                const third = study.thirdModelOpinion?.[key];
-                result[key] = calculateConsensus(first, second, third);
-            }
-            return result;
-        }
+    function computeConsensusValues(study) {
+      const result = {};
+      const allKeys = new Set([
+        ...Object.keys(study.firstModelDecision || {}),
+        ...Object.keys(study.secondModelDecision || {}),
+        ...Object.keys(study.thirdModelDecision || {})
+      ]);
+      allKeys.forEach(key => {
+        const f = study.firstModelDecision?.[key] ?? -1;
+        const s = study.secondModelDecision?.[key] ?? -1;
+        const t = study.thirdModelDecision?.[key] ?? -1;
+        result[key] = calculateConsensus(f, s, t);
+      });
+      return result;
+    }
 
-        function getConfidenceConfig() {
-            const config = {};
-            document.querySelectorAll('#confidence-form input[type=number]').forEach(input => {
-                config[input.name] = parseInt(input.value, 10);
-            });
-            return config;
-        }
+    // ---- Configuração ----
+    function getConfidenceConfig() {
+      const config = {};
+      document.querySelectorAll('#confidence-form input[type=number]').forEach(input => {
+        config[input.name] = parseInt(input.value, 10);
+      });
+      return config;
+    }
 
-        function getMatchMode() {
-            const inclusionMode = document.querySelector('input[name="inclusion-mode"]:checked')?.value || 'all';
-            const exclusionMode = document.querySelector('input[name="exclusion-mode"]:checked')?.value || 'all';
-            return { inclusionMode, exclusionMode };
-        }
+    function getMatchMode() {
+      return {
+        inclusionMode: document.querySelector('input[name="inclusion-mode"]:checked')?.value || 'all',
+        exclusionMode: document.querySelector('input[name="exclusion-mode"]:checked')?.value || 'all'
+      };
+    }
 
-        function passesCriteria(output, config) {
+    function passesCriteria(output, config) {
+      const { inclusionMode, exclusionMode } = getMatchMode();
+      const inclusionCriteria = Object.keys(config).filter(k => k.startsWith('IC'));
+      const exclusionCriteria = Object.keys(config).filter(k => k.startsWith('EC'));
 
-            
-            const { inclusionMode, exclusionMode } = getMatchMode();
-            const inclusionCriteria = Object.keys(config).filter(k => k.startsWith('IC'));
-            const exclusionCriteria = Object.keys(config).filter(k => k.startsWith('EC'));
+      let inclusionPass = inclusionCriteria.length === 0 ||
+        (inclusionMode === 'all'
+          ? inclusionCriteria.every(c => output[c] !== undefined && output[c] >= config[c])
+          : inclusionCriteria.some(c => output[c] !== undefined && output[c] >= config[c])
+        );
 
-            // Inclusão
-            let inclusionPass = false;
-            if (inclusionCriteria.length === 0) {
-                inclusionPass = true;
-            } else if (inclusionMode === 'all') {
+      let exclusionPass = exclusionCriteria.length > 0 &&
+        (exclusionMode === 'all'
+          ? exclusionCriteria.every(c => output[c] !== undefined && output[c] >= config[c])
+          : exclusionCriteria.some(c => output[c] !== undefined && output[c] >= config[c])
+        );
 
-                inclusionPass = inclusionCriteria.every(c => output[c] !== undefined && output[c] >= config[c]);
+      return inclusionPass && !exclusionPass;
+    }
 
-            } else if (inclusionMode === 'one') {
-                inclusionPass = inclusionCriteria.some(c => output[c] !== undefined && output[c] >= config[c]);
+    // ---- Form dinâmico ----
+    function generateDynamicCriteriaForm() {
+      const inclusionContainer = document.getElementById('inclusion-fields');
+      const exclusionContainer = document.getElementById('exclusion-fields');
+      inclusionContainer.innerHTML = '';
+      exclusionContainer.innerHTML = '';
 
-            }
+      (preferencesData.inclusionCriteria || []).forEach((crit, idx) => {
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.className = 'form-control';
+        input.name = `IC${idx + 1}`;
+        input.min = 1;
+        input.max = 7;
+        input.value = 6;
 
-            
+        const label = document.createElement('label');
+        label.innerText = crit;
+        label.htmlFor = input.name;
 
-            // Exclusão
-            let exclusionPass = false;
-            if (exclusionCriteria.length === 0) {
-                exclusionPass = false;
-            } else if (exclusionMode === 'all') {
-                exclusionPass = exclusionCriteria.every(c => output[c] !== undefined && output[c] <= config[c]);
-                console.log(exclusionPass)
-            } else if (exclusionMode === 'one') {
-                exclusionPass = exclusionCriteria.some(c => output[c] !== undefined && output[c] <= config[c]);
-            }
+        inclusionContainer.appendChild(label);
+        inclusionContainer.appendChild(input);
+      });
 
-            // Estudo será incluído apenas se passar na inclusão e NÃO passar na exclusão
-            return inclusionPass && !exclusionPass;
-        }
+      (preferencesData.exclusionCriteria || []).forEach((crit, idx) => {
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.className = 'form-control';
+        input.name = `EC${idx + 1}`;
+        input.min = 1;
+        input.max = 7;
+        input.value = 6;
 
+        const label = document.createElement('label');
+        label.innerText = crit;
+        label.htmlFor = input.name;
 
-        function generateDynamicCriteriaForm(allCriteriaKeys) {
-            const inclusionContainer = document.getElementById('inclusion-fields');
-            const exclusionContainer = document.getElementById('exclusion-fields');
-            inclusionContainer.innerHTML = '';
-            exclusionContainer.innerHTML = '';
+        exclusionContainer.appendChild(label);
+        exclusionContainer.appendChild(input);
+      });
 
-            allCriteriaKeys.forEach(key => {
-                const input = document.createElement('input');
-                input.type = 'number';
-                input.className = 'form-control';
-                input.name = key;
-                input.min = 1;
-                input.max = 7;
-                input.value = key.startsWith('IC') ? 4 : 2;
+      document.querySelectorAll('#confidence-form input[type=number], input[name="inclusion-mode"], input[name="exclusion-mode"]').forEach(el => {
+        el.addEventListener('input', renderStudies);
+        el.addEventListener('change', renderStudies);
+      });
+    }
 
-                const label = document.createElement('label');
-                label.innerText = key;
-                label.htmlFor = key;
+    // ---- Renderização ----
+    function renderStudies() {
+      const config = getConfidenceConfig();
+      const container = document.getElementById("cardsContainer");
+      container.innerHTML = "";
 
-                const container = key.startsWith('IC') ? inclusionContainer : exclusionContainer;
-                container.appendChild(label);
-                container.appendChild(input);
-            });
+      let included = 0, excluded = 0;
 
-            document.querySelectorAll('#confidence-form input[type=number]').forEach(input => {
-                input.addEventListener('input', renderStudies);
-            });
+      studies.forEach((study, idx) => {
+        const consensus = computeConsensusValues(study);
+        const decision = passesCriteria(consensus, config);
 
-            document.querySelectorAll('input[name="inclusion-mode"], input[name="exclusion-mode"]').forEach(r => {
-                r.addEventListener('change', renderStudies);
-            });
-        }
+        study.userDecision = decision ? "Include" : "Exclude";
+        if (decision) included++; else excluded++;
 
-        function renderStudies() {
-            const config = getConfidenceConfig();
-            const container = document.getElementById("cardsContainer");
-            container.innerHTML = "";
-
-            if (!excludedStudies.length) {
-                alert("No studies found.");
-                return;
-            }
-
-            let included = 0, excluded = 0;
-
-            excludedStudies.forEach((study, idx) => {
-                const consensus = computeConsensusValues(study);
-                const decision = passesCriteria(consensus, config);
-                if (decision) included++;
-                else excluded++;
-
-                const tableRows = Object.keys(study.firstModelDecision || {}).map(criteria => `
+        const rows = Object.keys(consensus).map(criteria => `
           <tr>
             <td>${criteria}</td>
-            <td>${study.firstModelDecision[criteria]}</td>
-            <td>${study.secondModelOpinion?.[criteria] ?? '—'}</td>
-            <td>${study.thirdModelOpinion?.[criteria] ?? '—'}</td>
+            <td>${study.firstModelDecision?.[criteria] ?? "—"}</td>
+            <td>${study.secondModelDecision?.[criteria] ?? "—"}</td>
+            <td>${study.thirdModelDecision?.[criteria] ?? "—"}</td>
             <td><strong>${consensus[criteria]}</strong></td>
           </tr>
         `).join('');
 
-                const card = document.createElement("div");
-                card.className = `card mb-4 p-3 ${decision ? 'included' : 'excluded'}`;
-                card.setAttribute("data-idx", idx);
-                card.innerHTML = `
-          <h5 class="card-title">${study.Title}</h5>
-          <p><strong>Abstract:</strong> ${study.Abstract}</p>
-          <p><strong>Keywords:</strong> ${study.Keywords || "—"}</p>
-          <h6 class="mt-3">Model Decisions</h6>
+        const card = document.createElement("div");
+        card.className = `card mb-4 p-3 ${decision ? 'included' : 'excluded'}`;
+        card.setAttribute("data-idx", idx);
+        card.innerHTML = `
+          <h5 class="card-title">${study.title || study.Title}</h5>
+          <p><strong>Abstract:</strong> ${study.abstract || study.Abstract}</p>
+          <p><strong>Keywords:</strong> ${study.keywords || study.Keywords || "—"}</p>
+          <h6 class="mt-3">Model Decisions & Consensus</h6>
           <table class="table table-bordered">
             <thead>
               <tr><th>Criteria</th><th>First Model</th><th>Second Model</th><th>Third Model</th><th>Consensus</th></tr>
             </thead>
-            <tbody>${tableRows}</tbody>
+            <tbody>${rows}</tbody>
           </table>
+          <p><strong>Final Decision:</strong> ${study.userDecision}</p>
         `;
-                container.appendChild(card);
-            });
+        container.appendChild(card);
+      });
 
-            document.getElementById('summary').innerText = `Included: ${included} | Excluded: ${excluded}`;
-        }
+      document.getElementById("summary").innerText = `Included: ${included} | Excluded: ${excluded}`;
+    }
 
-        document.getElementById('download-btn').addEventListener('click', () => {
-            const config = getConfidenceConfig();
-            const included = [], excluded = [];
+    // ---- Download ZIP ----
+    document.getElementById('download-btn').addEventListener('click', () => {
+      const config = getConfidenceConfig();
+      const included = studies.filter(s => s.userDecision === "Include");
+      const excluded = studies.filter(s => s.userDecision === "Exclude");
 
-            excludedStudies.forEach(study => {
-                const consensus = computeConsensusValues(study);
-                if (passesCriteria(consensus, config)) {
-                    study.userDecision = "Include";
-                    included.push(study);
-                } else {
-                    study.userDecision = "Exclude";
-                    excluded.push(study);
-                }
-            });
+      const zip = new JSZip();
 
-            const zip = new JSZip();
-            const metadata = {
-                config,
-                fullcriteria: localStorage.getItem("fullCriteria") || ""
-            };
+      // 🔹 Recuperar studyMetadata do localStorage (se existir)
+      const studyMetadata = JSON.parse(localStorage.getItem("studyMetadata") || "{}");
 
-            zip.file("metadata.json", JSON.stringify(metadata, null, 2));
-            zip.file("included.json", JSON.stringify(included, null, 2));
-            zip.file("excluded.json", JSON.stringify(excluded, null, 2));
+      // 🔹 Montar metadata completo
+      const metadata = {
+        config,
+        inclusionCriteria: preferencesData.inclusionCriteria || [],
+        exclusionCriteria: preferencesData.exclusionCriteria || [],
+        studyInfo: studyMetadata   // <-- agora incluído
+      };
 
-            zip.generateAsync({ type: "blob" }).then(content => {
-                const a = document.createElement("a");
-                a.href = URL.createObjectURL(content);
-                a.download = "consensus-results.zip";
-                a.click();
-                URL.revokeObjectURL(a.href);
-            });
-        });
+      zip.file("metadata.json", JSON.stringify(metadata, null, 2));
+      zip.file("included.json", JSON.stringify(included, null, 2));
+      zip.file("excluded.json", JSON.stringify(excluded, null, 2));
 
-        window.addEventListener("DOMContentLoaded", () => {
-            const raw = localStorage.getItem("excludedStudies");
-            if (!raw) {
-                alert("No studies found in localStorage.");
-                return;
-            }
+      // 🔹 Também salvar no localStorage (com studyInfo dentro)
+      localStorage.setItem("finalDecision", JSON.stringify({
+        metadata,
+        included,
+        excluded
+      }, null, 2));
 
-            excludedStudies = JSON.parse(raw);
-            const firstDecision = excludedStudies[0]?.firstModelDecision || {};
-            const allCriteria = Object.keys(firstDecision);
-            generateDynamicCriteriaForm(allCriteria);
-            renderStudies();
-        });
-    </script>
+      zip.generateAsync({ type: "blob" }).then(content => {
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(content);
+        a.download = "consensus-results.zip";
+        a.click();
+        URL.revokeObjectURL(a.href);
+      });
+    });
+
+
+    // ---- Inicialização ----
+    window.addEventListener("DOMContentLoaded", () => {
+      const raw = localStorage.getItem("excludedStudies");
+      if (!raw) {
+        alert("No studies found in localStorage.");
+        return;
+      }
+      studies = JSON.parse(raw);
+
+      // parse decisions para objetos
+      studies.forEach(study => {
+        study.firstModelDecision = parseCSVDecision(study.firstModelDecision);
+        study.secondModelDecision = parseCSVDecision(study.secondModelDecision);
+        study.thirdModelDecision = parseCSVDecision(study.thirdModelDecision);
+      });
+
+      const preferencesRaw = localStorage.getItem("preferencesData");
+      if (preferencesRaw) {
+        try { preferencesData = JSON.parse(preferencesRaw); }
+        catch (e) { console.error("Erro ao parsear preferencesData", e); }
+      }
+
+      generateDynamicCriteriaForm();
+      renderStudies();
+    });
+  </script>
 </body>
+
+<script>
+  $("#imports").load("components/imports.html");
+  $("#header").load("components/header.html");
+</script>
 
 </html>

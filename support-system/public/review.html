@@ -4,81 +4,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Step 3 - Output Review</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.0/jszip.min.js"></script>
-  <link rel="stylesheet" href="assets/style.css" />
-  <style>
-    .card.included {
-      background-color: #d4edda;
-      border-color: #c3e6cb;
-    }
-
-    .card.excluded {
-      background-color: #f8d7da;
-      border-color: #f5c6cb;
-    }
-
-    label {
-      font-weight: 600;
-      margin-top: 0.5rem;
-      display: block;
-    }
-
-    input[type="number"] {
-      max-width: 80px;
-    }
-
-    .navbar-toggler-icon {
-      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-    }
-  </style>
+  <title>Review</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <div id="imports"></div>
 </head>
+
+<style>
+  .card.included {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+  }
+
+  .card.excluded {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+  }
+
+  label {
+    font-weight: 600;
+    margin-top: 0.5rem;
+    display: block;
+  }
+
+  input[type="number"] {
+    max-width: 80px;
+  }
+
+  .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  }
+</style>
 
 <body class="bg-light">
 
-  <!-- Sidebar Offcanvas -->
-  <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="sidebar" aria-labelledby="sidebarLabel">
-    <div class="offcanvas-header">
-      <h5 class="offcanvas-title" id="sidebarLabel"><a style="text-decoration: none; color: white;"
-          href="login-management.html"> BM4LLM-SLR </a></h5>
-      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body">
-      <ul class="nav flex-column">
-        <li class="nav-item text-white-50 fw-bold mt-2">Welcome</li>
-        <li class="nav-item"><a class="nav-link text-white" href="index.html">Introduction</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="instructions.html">Instructions</a></li>
+  <div id="header"></div>
 
-        <li class="nav-item text-white-50 fw-bold mt-4">Configuration</li>
-        <li class="nav-item"><a class="nav-link text-white" href="questionnaire.html">Participant Profile</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="preferences.html">Run Setup</a></li>
-
-        <li class="nav-item text-white-50 fw-bold mt-4">Pre-Selection Phase</li>
-        <li class="nav-item"><a class="nav-link text-white" href="experimentation.html">LLM-Assisted Review</a></li>
-
-        <li class="nav-item text-white-50 fw-bold mt-4">Looping Phase</li>
-        <li class="nav-item"><a class="nav-link text-white" href="hil-confidence.html">Start Looping</a></li>
-
-        <li class="nav-item text-white-50 fw-bold mt-4">Results</li>
-        <li class="nav-item"><a class="nav-link text-white active" href="finalReport.html">Final Report</a></li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- Top Navbar -->
-  <nav class="navbar bg-dark text-white">
-    <div class="container-fluid">
-      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar"
-        aria-controls="sidebar">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <span class="navbar-brand mb-0 h1 text-white"><a style="text-decoration: none; color: white;"
-          href="login-management.html"> BM4LLM-SLR </a></span>
-    </div>
-  </nav>
-
-  <!-- Main Content -->
   <div class="container py-5">
     <div class="row justify-content-center">
       <div class="col-lg-10 bg-white p-5 rounded shadow-sm">
@@ -109,11 +69,11 @@
               <h5>Exclusion Criteria</h5>
               <div class="mb-2">
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="exclusion-mode" id="exc-all" value="all" checked>
+                  <input class="form-check-input" type="radio" name="exclusion-mode" id="exc-all" value="all" >
                   <label class="form-check-label" for="exc-all">Match All</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="exclusion-mode" id="exc-one" value="one">
+                  <input class="form-check-input" type="radio" name="exclusion-mode" id="exc-one" value="one" checked>
                   <label class="form-check-label" for="exc-one">Match One</label>
                 </div>
               </div>
@@ -131,16 +91,13 @@
 
         <!-- Actions -->
         <div class="my-4 text-end">
-          <button id="download-btn" class="btn btn-success">Download Assets</button>
-          <a class="btn btn-primary" href="hil-confidence.html">Continue...</a>
+          <button id="download-btn" class="btn btn-success">Download pre-screening assets</button>
+          <a class="btn btn-primary" href="hil-confidence.html">Go to Phase 2</a>
         </div>
 
       </div>
     </div>
   </div>
-
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
     let allData = [];
@@ -159,43 +116,64 @@
       return { inclusionMode, exclusionMode };
     }
 
-
-
-
     function passesCriteria(output, config) {
       const { inclusionMode, exclusionMode } = getMatchMode();
       const inclusionCriteria = Object.keys(config).filter(k => k.startsWith('IC'));
       const exclusionCriteria = Object.keys(config).filter(k => k.startsWith('EC'));
+      const validInclusionCriteria = inclusionCriteria.filter(c => output[c] !== undefined);
+      const validExclusionCriteria = exclusionCriteria.filter(c => output[c] !== undefined);
 
-      // Filtra critérios de inclusão que não têm valor -1
-      const validInclusionCriteria = inclusionCriteria.filter(c => output[c] !== -1 && output[c] !== undefined);
-      // Filtra critérios de exclusão que não têm valor -1
-      const validExclusionCriteria = exclusionCriteria.filter(c => output[c] !== -1 && output[c] !== undefined);
-
-      // Inclusão
+      // Avaliar inclusão
       let inclusionPass = false;
       if (validInclusionCriteria.length === 0) {
-        inclusionPass = true; // Sem critérios válidos de inclusão, passa automaticamente
+        inclusionPass = true;
       } else if (inclusionMode === 'all') {
         inclusionPass = validInclusionCriteria.every(c => output[c] >= config[c]);
       } else if (inclusionMode === 'one') {
         inclusionPass = validInclusionCriteria.some(c => output[c] >= config[c]);
       }
 
-      // Exclusão
+      // Avaliar exclusão
       let exclusionPass = false;
       if (validExclusionCriteria.length === 0) {
-        exclusionPass = true; // Sem critérios válidos de exclusão, não passa exclusão
+        exclusionPass = false;
       } else if (exclusionMode === 'all') {
-        exclusionPass = validExclusionCriteria.every(c => output[c] <= config[c]);
+        exclusionPass = validExclusionCriteria.every(c => output[c] >= config[c]);
       } else if (exclusionMode === 'one') {
-        exclusionPass = validExclusionCriteria.some(c => output[c] <= config[c]);
+        exclusionPass = validExclusionCriteria.some(c => output[c] >= config[c]);
       }
-      // Estudo será incluído apenas se passar na inclusão e NÃO passar na exclusão
 
-      return inclusionPass && exclusionPass;
+      // --- NOVAS REGRAS ---
+
+      // Regra 1: único critério de inclusão = -1 e nenhum exclusão satisfeito → inclui
+      if (
+        inclusionCriteria.length === 1 &&
+        output[inclusionCriteria[0]] === -1 &&
+        !exclusionPass
+      ) {
+        return true;
+      }
+
+      // Regra 2: passou inclusão e único critério de exclusão = -1 → inclui
+      if (
+        inclusionPass &&
+        exclusionCriteria.length === 1 &&
+        output[exclusionCriteria[0]] === -1
+      ) {
+        return true;
+      }
+
+      // Regra 3: inclusão = -1 e exclusão fraca → exclui
+      if (
+        inclusionCriteria.some(c => output[c] === -1) &&
+        exclusionCriteria.some(c => output[c] < config[c]) // exclusão fraca
+      ) {
+        return false;
+      }
+
+      // Resultado padrão
+      return inclusionPass && !exclusionPass;
     }
-
 
 
 
@@ -205,36 +183,63 @@
       container.innerHTML = '';
 
       let included = 0, excluded = 0;
+      const includedStudies = [];
+      const excludedStudies = [];
 
       allData.forEach(study => {
-        const isIncluded = passesCriteria(study.firstModelDecision, config);
-        if (isIncluded) included++; else excluded++;
+        let decisionObj = {};
+        if (typeof study.firstModelDecision === "string") {
+          const lines = study.firstModelDecision.trim().split("\n");
+          lines.forEach((line, idx) => {
+            if (idx === 0) return;
+            const [key, value] = line.split(",");
+            if (key && value) decisionObj[key.trim()] = parseInt(value.trim(), 10);
+          });
+        } else {
+          decisionObj = study.firstModelDecision || {};
+        }
+
+        const isIncluded = passesCriteria(decisionObj, config);
+        if (isIncluded) {
+          included++;
+          includedStudies.push({ ...study, userDecision: "Include" });
+        } else {
+          excluded++;
+          excludedStudies.push(study);
+        }
 
         const card = document.createElement('div');
-        card.className = `col-12 card p-3 ${isIncluded ? 'included' : 'excluded'}`;
+        card.className = `col-12 card p-4 shadow-sm ${isIncluded ? 'included' : 'excluded'}`;
         card.innerHTML = `
-          <h5>${study.Title}</h5>
-          <p><strong>Authors:</strong> ${study.Authors}</p>
-          <p><strong>Abstract:</strong> ${study.Abstract}</p>
-          <p><strong>Keywords:</strong> ${study.Keywords}</p>
-          <p><strong>Publication venue:</strong> ${study["Publication venue"]}</p>
-          <p><strong>Publication date:</strong> ${study["Publication date"]}</p>
-          <p><strong>Model Decision:</strong> ${JSON.stringify(study.firstModelDecision)}</p>
+          <h5 class="mb-2"><a href="${study.url}" target="_blank" class="text-decoration-none">${study.title}</a></h5>
+          <p class="mb-1"><strong>Authors:</strong> ${study.author || "N/A"}</p>
+          <p class="mb-1"><strong>Journal:</strong> ${study.journal || "N/A"} (${study.year || "N/A"})</p>
+          <p class="mb-1"><strong>Type:</strong> ${study.type} | <strong>Source:</strong> ${study.source}</p>
+          <p class="mb-1"><strong>Volume/Issue:</strong> ${study.volume || ""} (${study.number || ""}), pp. ${study.pages || "N/A"}</p>
+          <p class="mb-1"><strong>DOI:</strong> <a href="https://doi.org/${study.doi}" target="_blank">${study.doi}</a></p>
+          <p class="mb-2"><strong>Note:</strong> ${study.note || ""}</p>
+          <details><summary class="fw-bold">Abstract</summary><p class="mt-2">${study.abstract}</p></details>
+          <hr/><p class="small text-muted"><strong>Model Decision:</strong> ${JSON.stringify(decisionObj)}</p>
         `;
         container.appendChild(card);
       });
 
       document.getElementById('summary').innerText = `Included: ${included} | Excluded: ${excluded}`;
+
+      // Store included/excluded in localStorage
+      localStorage.setItem("includedStudies", JSON.stringify(includedStudies));
+      localStorage.setItem("excludedStudies", JSON.stringify(excludedStudies));
     }
 
-    function generateDynamicCriteriaForm(allCriteriaKeys) {
+    function generateDynamicCriteriaFormFromPreferences(preferences) {
       const inclusionContainer = document.getElementById('inclusion-fields');
       const exclusionContainer = document.getElementById('exclusion-fields');
 
       inclusionContainer.innerHTML = '';
       exclusionContainer.innerHTML = '';
 
-      allCriteriaKeys.forEach(key => {
+      preferences.inclusionCriteria.forEach((criterion, idx) => {
+        const key = `IC${idx + 1}`;
         const input = document.createElement('input');
         input.type = 'number';
         input.className = 'form-control';
@@ -242,15 +247,33 @@
         input.id = key;
         input.min = 1;
         input.max = 7;
-        input.value = key.startsWith('IC') ? 4 : 2;
+        input.value = 6;
 
         const label = document.createElement('label');
         label.htmlFor = key;
-        label.innerText = key;
+        label.innerText = criterion;
 
-        const container = key.startsWith('IC') ? inclusionContainer : exclusionContainer;
-        container.appendChild(label);
-        container.appendChild(input);
+        inclusionContainer.appendChild(label);
+        inclusionContainer.appendChild(input);
+      });
+
+      preferences.exclusionCriteria.forEach((criterion, idx) => {
+        const key = `EC${idx + 1}`;
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.className = 'form-control';
+        input.name = key;
+        input.id = key;
+        input.min = 1;
+        input.max = 7;
+        input.value = 6;
+
+        const label = document.createElement('label');
+        label.htmlFor = key;
+        label.innerText = criterion;
+
+        exclusionContainer.appendChild(label);
+        exclusionContainer.appendChild(input);
       });
 
       document.querySelectorAll('#confidence-form input[type=number]').forEach(input => {
@@ -261,42 +284,21 @@
     document.getElementById('download-btn').addEventListener('click', () => {
       const config = getConfidenceConfig();
 
-      const fullRunRaw = localStorage.getItem('experimentAnswers');
-      let fullRunStudies = [];
-      if (fullRunRaw) {
-        try {
-          fullRunStudies = JSON.parse(fullRunRaw);
-        } catch (e) {
-          console.error('Error parsing fullRunStudies:', e);
-        }
-      }
+      const includedStudies = JSON.parse(localStorage.getItem("includedStudies") || "[]");
+      const excludedStudies = JSON.parse(localStorage.getItem("excludedStudies") || "[]");
+      const fullRunStudies = JSON.parse(localStorage.getItem("experimentAnswers") || "[]");
+      const fullCriteria = JSON.parse(localStorage.getItem("fullCriteria") || "{}");
 
-      const includedStudies = [];
-      const excludedStudies = [];
-
-      allData.forEach(study => {
-        const included = passesCriteria(study.firstModelDecision, config);
-
-        if (included) {
-          const studyWithDecision = { ...study, userDecision: "Include" };
-          includedStudies.push(studyWithDecision);
-        } else {
-          excludedStudies.push(study);
-        }
-      });
+      // 🔹 Recuperar o objeto extra
+      const studyMetadata = JSON.parse(localStorage.getItem("studyMetadata") || "{}");
 
       const zip = new JSZip();
 
-      let fullCriteria = {};
-      try {
-        fullCriteria = JSON.parse(localStorage.getItem("fullCriteria"));
-      } catch (e) {
-        console.warn("Error parsing fullCriteria from localStorage:", e);
-      }
-
+      // 🔹 Agora incluir tudo no metadata
       const metadata = {
         config,
-        fullcriteria: fullCriteria
+        fullcriteria: fullCriteria,
+        studyInfo: studyMetadata   // <-- objeto que você mostrou
       };
 
       zip.file("metadata.json", JSON.stringify(metadata, null, 2));
@@ -307,11 +309,12 @@
       zip.generateAsync({ type: "blob" }).then(content => {
         const a = document.createElement("a");
         a.href = URL.createObjectURL(content);
-        a.download = "output-assets.zip";
+        a.download = "first_llm_screnning_assets.zip";
         a.click();
         URL.revokeObjectURL(a.href);
       });
     });
+
 
     document.querySelectorAll('input[name="inclusion-mode"], input[name="exclusion-mode"]').forEach(radio => {
       radio.addEventListener('change', updateDisplay);
@@ -327,17 +330,24 @@
 
         allData = JSON.parse(raw);
 
-        const firstDecision = allData[0]?.firstModelDecision || {};
-        const allCriteria = Object.keys(firstDecision);
-        generateDynamicCriteriaForm(allCriteria);
+        const prefsRaw = localStorage.getItem("preferencesData");
+        if (prefsRaw) {
+          const prefs = JSON.parse(prefsRaw);
+          generateDynamicCriteriaFormFromPreferences(prefs);
+        }
 
         updateDisplay();
       } catch (err) {
-        console.error("Erro ao carregar dados do localStorage:", err);
+        console.error("Erro ao carregar dados:", err);
         document.getElementById('summary').innerText = "Erro ao carregar dados.";
       }
     });
   </script>
 </body>
+
+<script>
+  $("#imports").load("components/imports.html");
+  $("#header").load("components/header.html");
+</script>
 
 </html>

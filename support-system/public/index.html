@@ -4,82 +4,299 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LLMs to Support Studies Selection</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/style.css" />
+  <title>BM4LLM-SLR</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <div id="imports"></div>
 </head>
+
+<style>
+  .responsive-iframe {
+    position: relative;
+    padding-bottom: 56.25%;
+    /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+    background: #000;
+    /* optional */
+    border-radius: 8px;
+    /* optional */
+  }
+
+  .responsive-iframe iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+</style>
+
+
 
 <body class="bg-light" style="height: 100vh;">
 
-  <!-- Sidebar Offcanvas -->
-  <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="sidebar" aria-labelledby="sidebarLabel">
-    <div class="offcanvas-header">
-      <h5 class="offcanvas-title" id="sidebarLabel"><a style="text-decoration: none; color: white;" href="login-management.html"> BM4LLM-SLR </a></h5>
-      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body">
-      <ul class="nav flex-column">
-
-        <li class="nav-item text-white-50 fw-bold mt-2">Welcome</li>
-        <li class="nav-item"><a class="nav-link text-white" href="index.html">Introduction</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="instructions.html">Instructions</a></li>
-
-        <li class="nav-item text-white-50 fw-bold mt-4">Configuration</li>
-        <li class="nav-item"><a class="nav-link text-white" href="questionnaire.html">Participant Profile</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="preferences.html">Run Setup</a></li>
-
-        <li class="nav-item text-white-50 fw-bold mt-4">Pre-Selection Phase</li>
-        <li class="nav-item"><a class="nav-link text-white" href="experimentation.html">LLM-Assisted Review</a></li>
-
-        <li class="nav-item text-white-50 fw-bold mt-4">Looping Phase</li>
-        <li class="nav-item"><a class="nav-link text-white" href="hil-confidence.html">Start Looping</a></li>
-
-        <li class="nav-item text-white-50 fw-bold mt-4">Results</li>
-        <li class="nav-item"><a class="nav-link text-white" href="finalReport.html">Final Report</a></li>
-
-      </ul>
-    </div>
-  </div>
-
-
-  <!-- Top Navbar (for toggle button) -->
-  <nav class="navbar bg-dark text-white">
-    <div class="container-fluid">
-      <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar"
-        aria-controls="sidebar">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <span class="navbar-brand mb-0 h1 text-white"><a style="text-decoration: none; color: white;" href="login-management.html"> BM4LLM-SLR </a></span>
-    </div>
-  </nav>
+  <div id="header"></div>
 
   <!-- Main Content -->
   <div class="container text-center mt-5">
     <div class="row justify-content-center">
       <div class="col-md-10 col-lg-8 p-5 bg-white rounded shadow-sm">
-        <h2 class="mb-4">LLMs to Support Studies Selection in Systematic Literature Reviews</h2>
 
-        <p class="text-start">
-          You are about to participate in a voluntary experiment conducted by the lead researcher, <strong>Vinicius dos
-            Santos</strong> that is investigating the usage of Large Language Models (LLM) in SLR process. More
-          especifically, in the primary studies selection task.
-          <br><br>
-          <b>Important</b>: This session will be recorded for transcription and artifact improvement purposes.
-          Transcriptions may be published for scientific analysis, but <strong>audio recordings will not be
-            shared</strong>. By participating, you agree to share your oppinions and impressions recorded textually.
-          <br><br>
-          Your impressions and feedback on the artifact are highly valuable to us. By clicking "I agree", you confirm
-          that you understand and accept these terms.
+
+        <h4 class="mb-5">Large Language Models to Support Systematic Literature Reviews</h4>
+
+        <p>Welcome to our tool to support the usage of Large Language Models (LLMs) in the Systematic Literature Review (SLR) process. Please, access the top-left menu to navigate in the tool pages.</p>
+
+
+         <div class="container my-4">
+          <h4 class="mt-5">Supplementary material</h4>
+          <p>
+            Access the slides presentation
+            <a href="https://docs.google.com/presentation/d/e/2PACX-1vSUV05pu5nJQScEhYIZq6JmCk8ELu7PfYdQUrBaSiZv7BkSWxisAkt6FxbXly_fcQ/pub?start=false&loop=true&delayms=30000"
+              target="_blank">
+              here
+            </a>
+          </p>
+
+          <div class="responsive-iframe">
+            <iframe
+              src="https://docs.google.com/presentation/d/e/2PACX-1vSUV05pu5nJQScEhYIZq6JmCk8ELu7PfYdQUrBaSiZv7BkSWxisAkt6FxbXly_fcQ/pubembed?start=false&loop=false&delayms=3000"
+              frameborder="0" allowfullscreen mozallowfullscreen webkitallowfullscreen>
+            </iframe>
+          </div>
+        </div>
+
+
+      
+          <!-- Why section -->
+        <h4 class="mt-5">Why do we need a model for using LLM in SLR?</h4>
+        <p style="text-align: justify;">
+          Systematic Literature Reviews are essential for building scientific evidence, but they are labor-intensive.
+          LLMs have the potential to assist, but they may introduce bias or inconsistencies if used alone. Therefore, to use LLMs in this SLR process may need additional layers of bias mitigation to increase the trustworthiness of outputs.
         </p>
 
+
+        <h4 class="mt-5"> What is BM4LLM-SLR?
+        </h4>
+        <!-- Short description -->
+        <p style="text-align: justify;">
+          BM4LLM-SLR means <u>B</u>ias <u>M</u>itigation for <u>LLM</u>-Assisted <u>S</u>ystematic <u>L</u>iterature
+          <u>R</u>eviews. BM4LLM-SLR is a method designed to support researchers in the study selection phase of Systematic Literature Reviews (SLRs), making the use of Large Language Models (LLMs) more reliable and transparent.
+        </p>
+
+      
+       
+
+        <!-- FAQ Accordion -->
+        <h4 class="mt-5">FAQ</h4>
+        <div class="accordion" style="text-align: justify;" id="faqAccordion">
+
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="q1">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#a1"
+                aria-expanded="true" aria-controls="a1">
+                What is a systematic review?
+              </button>
+            </h2>
+            <div id="a1" class="accordion-collapse collapse show" aria-labelledby="q1" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                A systematic review is a structured methodology used to identify, evaluate, and synthesize studies on a
+                given topic, ensuring comprehensive and unbiased evidence gathering. In Software Engineering area this
+                method was adapted by Barbara A. Kitchenham. She wrote a technical report that became the base guideline
+                to SLR method - <a
+                  href="https://legacyfileshare.elsevier.com/promis_misc/525444systematicreviewsguide.pdf">access the
+                  reference here</a>.</div>
+
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="q2">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a2"
+                aria-expanded="false" aria-controls="a2">
+                Does this tool work for systematic reviews and systematic mappings?
+              </button>
+            </h2>
+            <div id="a2" class="accordion-collapse collapse" aria-labelledby="q2" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Yes, the process for studies selection are very similar, hence, BM4LLM-SLR can (for now) support both
+                systematic reviews and systematic mappings.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="q3">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a3"
+                aria-expanded="false" aria-controls="a3">
+                Which confidence do I have that this tool will not bias my results?
+              </button>
+            </h2>
+            <div id="a3" class="accordion-collapse collapse" aria-labelledby="q3" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Our proposal is not trust 100% in LLM decisions. Therefore, the main premisse of BM4LLM-SLR is to
+                include human verification that ratifies the decisions. BM4LLM-SLR also includes a bias mitigation
+                layer, allowing users to configure confidence levels, reviewer involvement, and strictness. This reduces
+                the risk of bias compared to raw LLM outputs. Our recommendation is to always check the exclusions to
+                not loose any important studies.
+
+                <p>
+                  To increase our trust in LLM decisions, we need to apply bias mitigation actions. For this, BM4LLM-SLR
+                  could be used which the overall process is described below:
+                </p>
+
+                <!-- Model Figure -->
+                <div class="text-center mb-4">
+                  <img src="assets/images/BM4LLM-SLR.png" alt="Method Diagram" class="img-fluid rounded border"
+                    style="max-height: 900px;">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="q4">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a4"
+                aria-expanded="false" aria-controls="a4">
+                Which LLMs should I use?
+              </button>
+            </h2>
+            <div id="a4" class="accordion-collapse collapse" aria-labelledby="q4" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                The system is flexible and can be used with different LLMs. The choice depends on availability, cost,
+                and performance for your research area.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="q5">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a5"
+                aria-expanded="false" aria-controls="a5">
+                Can I use this tool with API integration (OpenAI or Gemini)?
+              </button>
+            </h2>
+            <div id="a5" class="accordion-collapse collapse" aria-labelledby="q5" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Integration with LLMs is still experimental in this version. We are actively improving the tool to
+                enable full automation in the near future. If you want to use the Ollama environment, we recommend
+                installing it locally or running it in a Docker container. Once set up, you can link it at the top of
+                the page and send prompts to the model automatically.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="q6">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a6"
+                aria-expanded="false" aria-controls="a6">
+                Can I cite this tool in my paper?
+              </button>
+            </h2>
+            <div id="a6" class="accordion-collapse collapse" aria-labelledby="q6" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Not yet, BM4LLM-SLR is its early stage of experimentation and soon will be published. Please check our
+                documentation for citation details.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="q7">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a7"
+                aria-expanded="false" aria-controls="a7">
+                Is this tool integrated with Parsifal or other tools?
+              </button>
+            </h2>
+            <div id="a7" class="accordion-collapse collapse" aria-labelledby="q7" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Partially, BM4LLM-SLR is independent, but we provide an importation tool that accepts xls and bib files
+                that come from parsifal tool. A better integration with Parsifal or other SLR tools is under
+                consideration for future releases.
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+
+
+        <div class="container my-4">
+          <h3 class="mb-3">Systematic Literature Reviews Guidelines</h3>
+          <table class="table table-striped table-bordered table-hover align-middle">
+            <thead class="table-dark">
+              <tr>
+                <th scope="col">Authors</th>
+                <th scope="col">Title</th>
+                <th scope="col">Year</th>
+                <th scope="col">Link</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Kitchenham, B.; Charters, S.</td>
+                <td>Guidelines for Performing Systematic Literature Reviews in Software Engineering (EBSE-2007-01)</td>
+                <td>2007</td>
+                <td><a href="https://legacyfileshare.elsevier.com/promis_misc/525444systematicreviewsguide.pdf"
+                    target="_blank" class="btn btn-sm btn-primary">Access</a></td>
+              </tr>
+              <tr>
+                <td>Brereton, P.; Kitchenham, B.; Budgen, D.; Turner, M.; Khalil, M.</td>
+                <td>Lessons from Applying the Systematic Literature Review Process within the Software Engineering
+                  Domain</td>
+                <td>2007</td>
+                <td><a href="https://www.sciencedirect.com/science/article/pii/S016412120600197X" target="_blank"
+                    class="btn btn-sm btn-primary">Access</a></td>
+              </tr>
+              <tr>
+                <td>Wohlin, C.</td>
+                <td>Guidelines for Snowballing in Systematic Literature Studies and a Replication in Software
+                  Engineering</td>
+                <td>2014</td>
+                <td>
+                  <a href="https://dl.acm.org/doi/10.1145/2601248.2601268" target="_blank"
+                    class="btn btn-sm btn-primary me-1">Access</a>
+                </td>
+              </tr>
+              <tr>
+                <td>Wohlin, C.; Mendes, E.; Romero Felizardo, K.; Kalinowski, M.</td>
+                <td>Guidelines for the Search Strategy to Update Systematic Literature Reviews in Software Engineering
+                </td>
+                <td>2020</td>
+                <td><a href="https://arxiv.org/abs/2006.05542" target="_blank" class="btn btn-sm btn-primary">Access</a>
+                </td>
+              </tr>
+              <tr>
+                <td>Kitchenham, B.; Budgen, D.; Brereton, P.</td>
+                <td>Evidence-Based Software Engineering and Systematic Reviews (book)</td>
+                <td>2015</td>
+                <td><a
+                    href="https://www.taylorfrancis.com/books/edit/10.1201/b19467/evidence-based-software-engineering-systematic-reviews-barbara-ann-kitchenham-david-budgen-pearl-brereton"
+                    target="_blank" class="btn btn-sm btn-primary">Access</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+
+
+        <!-- Footer -->
+        <footer class="mt-5 text-muted small">
+          <p>This is an experimental and open-source tool. Use with caution and adapt to your research context.</p>
+        </footer>
 
       </div>
     </div>
   </div>
 
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="assets/script.js"></script>
+
 </body>
+
+<script>
+  $("#imports").load("components/imports.html");
+  $("#header").load("components/header.html");
+</script>
 
 </html>

@@ -3,223 +3,233 @@
 
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Step 4 – LLM Re-Evaluation (Low Confidence)</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/style.css" />
+
+  <!-- Bootstrap + jQuery -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- JSZip -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.0/jszip.min.js"></script>
+
+  <!-- Templates -->
   <script src="assets/templates.js"></script>
+
+  <style>
+    .output-box {
+      resize: vertical;
+    }
+
+    .copy-btn {
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
 
-<body class="bg-light" style="height: 100vh;">
-
-  <!-- Sidebar Offcanvas -->
-  <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="sidebar" aria-labelledby="sidebarLabel">
-    <div class="offcanvas-header">
-      <h5 class="offcanvas-title" id="sidebarLabel"><a style="text-decoration: none; color: white;"
-          href="login-management.html"> BM4LLM-SLR </a></h5>
-      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body">
-      <ul class="nav flex-column">
-        <li class="nav-item text-white-50 fw-bold mt-2">Welcome</li>
-        <li class="nav-item"><a class="nav-link text-white" href="index.html">Introduction</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="instructions.html">Instructions</a></li>
-
-        <li class="nav-item text-white-50 fw-bold mt-4">Configuration</li>
-        <li class="nav-item"><a class="nav-link text-white" href="questionnaire.html">Participant Profile</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="preferences.html">Run Setup</a></li>
-
-        <li class="nav-item text-white-50 fw-bold mt-4">Pre-Selection Phase</li>
-        <li class="nav-item"><a class="nav-link text-white" href="experimentation.html">LLM-Assisted Review</a></li>
-
-        <li class="nav-item text-white-50 fw-bold mt-4">Looping Phase</li>
-        <li class="nav-item"><a class="nav-link text-white" href="hil-confidence.html">Start Looping</a></li>
-
-        <li class="nav-item text-white-50 fw-bold mt-4">Results</li>
-        <li class="nav-item"><a class="nav-link text-white active" href="finalReport.html">Final Report</a></li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- Top Navbar -->
-  <nav class="navbar bg-dark text-white">
-    <div class="container-fluid">
-      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar"
-        aria-controls="sidebar">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <span class="navbar-brand mb-0 h1 text-white"><a style="text-decoration: none; color: white;"
-          href="login-management.html"> BM4LLM-SLR </a></span>
-    </div>
-  </nav>
+<body class="bg-light" style="min-height:100vh;">
+  <div id="header"></div>
 
   <div class="container py-5">
     <div class="row justify-content-center">
-      <div class="col-lg-12 bg-white p-4 rounded shadow-sm">
-        <h2 class="mb-4 text-center">Low Confidence Re-Evaluation</h2>
+      <div class="col-lg-12 bg-white p-5 rounded shadow-sm">
+        <h2 class="mb-4 text-center">Low Confidence Mode</h2>
+
+        <div class="d-flex justify-content-end mb-4">
+          <div class="input-group" style="max-width: 500px;">
+            <input type="text" class="form-control" placeholder="Enter LLM URL"
+              value="http://localhost:11434/api/chat" id="llmUrlInput">
+            <button class="btn btn-info" id="generateBtn">Generate All Responses</button>
+          </div>
+        </div>
+
         <div id="cardsContainer"></div>
         <button class="btn btn-success save-btn mt-4">Save and Continue</button>
       </div>
     </div>
   </div>
 
-  <!-- Bootstrap Bundle -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
   <script>
+    let excludedStudies = [];
+    const templateType = 'felizardo';
 
-    async function loadRunData() {
-      const runId = localStorage.getItem("runId");
-      const res = await fetch(`/get-run/${runId}`);
-      if (!res.ok) {
-        alert("Failed to load run data.");
-        return null;
-      }
-      return res.json();
+    function buildCriteriaText(inclusion, exclusion) {
+      const inc = inclusion.map((c, i) => `- IC${i + 1}: ${c}`);
+      const exc = exclusion.map((c, i) => `- EC${i + 1}: ${c}`);
+      return [...inc, ...exc].join("\n");
     }
 
-    function generatePrompt(template, study, criteria) {
-      return templates[template]?.(
-        study.Title,
-        study.Abstract,
-        study.Keywords || '',
-        study["Publication venue"] || '',
-        study["Publication date"] || '',
-        criteria
-      ) || 'Prompt unavailable.';
+    function generatePrompt(study, criteria) {
+      const title = study.title || "—";
+      const abstract = study.abstract || "—";
+      const keywords = study.keywords || "";
+      const publication = study.journal || "—";
+      const date = study.date || "—";
+      return templates[templateType](title, abstract, keywords, publication, date, criteria);
     }
 
-    async function loadAndRender() {
+    function loadStudies() {
       const raw = localStorage.getItem("excludedStudies");
       if (!raw) {
         alert("No excluded studies found.");
+        window.location.href = "step4.html";
         return;
       }
-
       excludedStudies = JSON.parse(raw);
-      const run = await loadRunData();
-      const promptType = run?.prompt || 'felizardo';
-      const criteria = localStorage.getItem("fullCriteria") || 'Insert your inclusion/exclusion criteria here';
 
-      const model2Name = localStorage.getItem('model2') || 'Model 2';
-      const model3Name = localStorage.getItem('model3') || 'Model 3';
+      const savedData = JSON.parse(localStorage.getItem("preferencesData")) || {};
+      const inclusionCriteria = savedData.inclusionCriteria || [];
+      const exclusionCriteria = savedData.exclusionCriteria || [];
+      const criteriaText = buildCriteriaText(inclusionCriteria, exclusionCriteria);
 
       const container = document.getElementById("cardsContainer");
       container.innerHTML = "";
 
       excludedStudies.forEach((study, idx) => {
-        const prompt = generatePrompt(promptType, study, criteria);
+        const prompt = generatePrompt(study, criteriaText);
         const card = document.createElement("div");
-        card.className = "card mb-4";
-        card.setAttribute("data-idx", idx);
-        card.innerHTML = `
-      <div class="card-body">
-        <h5 class="card-title">${study.Title}</h5>
-        <p><strong>Abstract:</strong> ${study.Abstract}</p>
-        <p><strong>Keywords:</strong> ${study.Keywords || "—"}</p>
+        card.className = "card mb-4 w-100";
+        const promptId = `promptText${idx}`;
+        const textarea2 = `outputBox2_${idx}`;
+        const textarea3 = `outputBox3_${idx}`;
 
-        <div class="accordion mb-3" id="promptAccordion${idx}">
-          <div class="accordion-item">
-            <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                data-bs-target="#collapsePrompt${idx}" aria-expanded="false" aria-controls="collapsePrompt${idx}">
-                Show Prompt
-              </button>
-            </h2>
-            <div id="collapsePrompt${idx}" class="accordion-collapse collapse">
-              <div class="accordion-body">
-                <pre id="promptText${idx}" class="bg-light p-3 rounded" style="white-space: pre-wrap;">${prompt}</pre>
-                <button class="btn btn-sm btn-primary mt-2 copy-btn" data-target="promptText${idx}">Copy</button>
+        card.innerHTML = `
+          <div class="card-body">
+            <h5 class="card-title">${idx + 1}. ${study.title || "—"}</h5>
+            <p><strong>Abstract:</strong> ${study.abstract || "—"}</p>
+            <p><strong>Keywords:</strong> ${study.keywords || "—"}</p>
+
+            <div class="accordion mb-3" id="promptAccordion${idx}">
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapsePrompt${idx}" aria-expanded="false">
+                    Show Prompt
+                  </button>
+                </h2>
+                <div id="collapsePrompt${idx}" class="accordion-collapse collapse" data-bs-parent="#promptAccordion${idx}">
+                  <div class="accordion-body">
+                    <pre id="${promptId}" class="bg-light p-3 rounded" style="white-space: pre-wrap;">${prompt}</pre>
+                    <div class="d-flex gap-2 mt-2">
+                      <button class="btn btn-sm btn-primary copy-btn" data-target="${promptId}">Copy</button>
+                      <button class="btn btn-sm btn-success" onclick="sendPrompt('${promptId}', '${textarea2}')">Send to 2nd Model</button>
+                      <button class="btn btn-sm btn-success" onclick="sendPrompt('${promptId}', '${textarea3}')">Send to 3rd Model</button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        <div class="mb-3">
-          <label class="form-label">Paste the response from ${model2Name}:</label>
-          <textarea class="form-control output-box-1" rows="4" placeholder="Paste the result here..."></textarea>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Paste the response from ${model3Name}:</label>
-          <textarea class="form-control output-box-2" rows="4" placeholder="Paste the result here..."></textarea>
-        </div>
-      </div>`;
+            <div class="mb-3">
+              <label class="form-label">Second Model Decision:</label>
+              <textarea id="${textarea2}" class="form-control output-box" rows="4" placeholder="Paste or generate response..."></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Third Model Decision:</label>
+              <textarea id="${textarea3}" class="form-control output-box" rows="4" placeholder="Paste or generate response..."></textarea>
+            </div>
+          </div>
+        `;
         container.appendChild(card);
       });
 
-      bindSaveEvents();
+      bindSaveButton();
     }
 
-    function parseCSVToJSON(csvText) {
-      const lines = csvText.trim().split("\n");
-      const result = {};
-      for (let i = 1; i < lines.length; i++) {
-        const [key, value] = lines[i].split(",").map(s => s.trim());
-        if (!key || isNaN(value)) throw new Error("Invalid CSV format.");
-        result[key] = parseInt(value, 10);
-      }
-      return result;
-    }
-
-    function bindSaveEvents() {
-      document.querySelector(".save-btn").addEventListener("click", () => {
-        const cards = document.querySelectorAll(".card");
-
+    function bindSaveButton() {
+      document.querySelector('.save-btn').addEventListener('click', () => {
+        const cards = document.querySelectorAll('.card');
         for (let i = 0; i < cards.length; i++) {
-          const card = cards[i];
-          const output1 = card.querySelector(".output-box-1").value.trim();
-          const output2 = card.querySelector(".output-box-2").value.trim();
-
-          if (!output1 || !output2) {
-            alert(`Missing output(s) for study ${i + 1}.`);
+          const output2 = cards[i].querySelector(`#outputBox2_${i}`).value.trim();
+          const output3 = cards[i].querySelector(`#outputBox3_${i}`).value.trim();
+          if (!output2 || !output3) {
+            alert(`Study ${i + 1}: missing one or both responses.`);
             return;
           }
-
-          try {
-            const parsed1 = parseCSVToJSON(output1);
-            const parsed2 = parseCSVToJSON(output2);
-            excludedStudies[i].secondModelOpinion = parsed1;
-            excludedStudies[i].thirdModelOpinion = parsed2;
-          } catch (e) {
-            alert(`Error parsing CSV for study ${i + 1}: ${e.message}`);
-            return;
-          }
+          excludedStudies[i].secondModelDecision = output2;
+          excludedStudies[i].thirdModelDecision = output3;
         }
-
-        // Salvar novamente os dados em localStorage
-        localStorage.setItem("excludedStudies", JSON.stringify(excludedStudies));
-
-        // Salvar opiniões separadamente (útil para consensus.html)
-        const firstModel = excludedStudies.map(s => s.firstModelOpinion || {});
-        const secondModel = excludedStudies.map(s => s.secondModelOpinion || {});
-        const thirdModel = excludedStudies.map(s => s.thirdModelOpinion || {});
-
-        localStorage.setItem("firstModelOpinion", JSON.stringify(firstModel));
-        localStorage.setItem("secondModelOpinion", JSON.stringify(secondModel));
-        localStorage.setItem("thirdModelOpinion", JSON.stringify(thirdModel));
-
-        window.location.href = "auto-consensus.html";
+        localStorage.setItem('excludedStudies', JSON.stringify(excludedStudies));
+        window.location.href = 'auto-consensus.html';
       });
     }
 
-    // Evento global para copiar texto dos prompts
+    // ============================
+    // LLM integration
+    // ============================
+    async function sendPrompt(promptId, textareaId) {
+      const llmhost = document.querySelector("#llmUrlInput").value;
+      const prompt = document.getElementById(promptId).innerText;
+      const textarea = document.getElementById(textareaId);
+      textarea.value = '⏳ Waiting for response...';
+
+      try {
+        const response = await fetch(llmhost, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'llama3.2',
+            messages: [{ role: 'user', content: prompt }],
+            stream: true
+          })
+        });
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        let result = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const chunk = decoder.decode(value, { stream: true });
+          const lines = chunk.split('\n').filter(l => l.trim() !== '');
+          for (const line of lines) {
+            try {
+              const obj = JSON.parse(line);
+              if (obj.message?.content) {
+                result += obj.message.content;
+                textarea.value = result;
+              }
+            } catch { }
+          }
+        }
+      } catch (err) {
+        console.error(err);
+        textarea.value = '❌ Error calling LLM.';
+      }
+    }
+
+    async function generateAllResponses() {
+      const cards = document.querySelectorAll('.card');
+      for (let i = 0; i < cards.length; i++) {
+        const promptId = `promptText${i}`;
+        await sendPrompt(promptId, `outputBox2_${i}`);
+        await sendPrompt(promptId, `outputBox3_${i}`);
+      }
+      alert("All responses generated!");
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      $("#header").load("components/header.html");
+      loadStudies();
+      document.getElementById('generateBtn').addEventListener('click', generateAllResponses);
+    });
+
+    // ============================
+    // Clipboard copy
+    // ============================
     document.addEventListener('click', function (event) {
       if (event.target.classList.contains('copy-btn')) {
         const targetId = event.target.getAttribute('data-target');
         const textToCopy = document.getElementById(targetId).innerText;
-
         navigator.clipboard.writeText(textToCopy).then(() => {
-          const originalText = event.target.innerText;
           event.target.innerText = 'Copied!';
-          setTimeout(() => {
-            event.target.innerText = originalText;
-          }, 2000);
-        }).catch(() => {
-          alert('Failed to copy text.');
+          setTimeout(() => { event.target.innerText = 'Copy'; }, 2000);
         });
       }
     });
-
-    window.addEventListener("DOMContentLoaded", loadAndRender);
   </script>
 </body>
 

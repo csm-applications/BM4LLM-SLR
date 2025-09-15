@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Preferences</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <div id="imports"></div>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+  <script src="assets/templates.js"></script>
+
+  <style>
+    .section-box {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 28px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #0d6efd;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #e9ecef;
+      padding-bottom: 6px;
+    }
+
+    .disabled-section {
+      pointer-events: none;
+      opacity: 0.6;
+    }
+  </style>
+
+
+</head>
+
+
+<body class="bg-light">
+
+  <div id="header"></div>
+
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+
+        <h2 class="mb-4 text-center">Preferences Setup</h2>
+
+        <form id="selectionForm">
+
+          <!-- Basic Informations -->
+          <div class="section-box">
+            <h3 class="section-title">📖 Basic Informations</h3>
+            <input type="text" class="form-control mb-3" id="studyTitle" placeholder="Study Title" required>
+            <textarea class="form-control mb-3" id="studyAbstract" rows="3" placeholder="Study Abstract"
+              required></textarea>
+            <input type="text" class="form-control mb-3" id="studyKeywords" placeholder="Keywords (comma separated)"
+              required>
+          </div>
+
+          <!-- Protocol Informations -->
+          <div class="section-box">
+            <h3 class="section-title">⚙️ Protocol Informations</h3>
+            <input type="text" class="form-control mb-3" id="searchString" placeholder="Search String" required>
+
+            <div class="mb-3">
+              <label class="form-label fw-bold">Inclusion Criteria</label>
+              <div id="inclusionCriteria"></div>
+              <button type="button" class="btn btn-sm btn-outline-primary mt-2"
+                onclick="addCriteria('inclusionCriteria')">+ Add
+                Inclusion Criteria</button>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-bold">Exclusion Criteria</label>
+              <div id="exclusionCriteria"></div>
+              <button type="button" class="btn btn-sm btn-outline-primary mt-2"
+                onclick="addCriteria('exclusionCriteria')">+ Add
+                Exclusion Criteria</button>
+            </div>
+          </div>
+
+          <!-- Prompt Template Selection -->
+          <div class="section-box">
+            <h3 class="section-title">📝 Prompt Template</h3>
+            <div class="accordion mb-4" id="promptAccordion">
+
+              <!-- Prompt 1 -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFelizardo">
+                  <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseFelizardo" aria-expanded="true" aria-controls="collapseFelizardo">
+                    <input class="form-check-input me-2" type="radio" name="prompt" value="felizardo" required />
+                    Felizardo (2024)
+                  </button>
+                </h2>
+                <div id="collapseFelizardo" class="accordion-collapse collapse show" aria-labelledby="headingFelizardo"
+                  data-bs-parent="#promptAccordion">
+                  <div class="accordion-body">
+                    <pre class="bg-light p-3 rounded" id="felizardoTemplate">Assume you are a software engineering
+  researcher conducting a systematic literature review
+  (SLR). Consider the title, abstract, keywords, publication, and date of a
+  primary study.
+
+  Title: ${title}
+  Abstract: ${abstract}
+  Keywords: ${keywords}
+  Publication venue: ${publication}
+  Publication date: ${date}
+
+  Using a 1-7 Likert scale (1 - Strongly disagree, 2 - Disagree, 3 - Somewhat disagree, 4 - Neutral, 5 - Somewhat agree, 6 - Agree, 7 - Strongly agree,), rate your agreement with the following criteria (only number). 
+  If you rate near 7 to a inclusion criteria, the study meet with this criteria and should be included. If you rate near 7 to a exclusion criteria, the study also meet with this criteria and should be excluded. 
+
+  IMPORTANT: Don't be lenient, is better to exclude a paper in this phase. But, remember if it is not possible to evaluate based on the provided information give the score -1.
+
+  ${criteria}
+
+  give me the result in CSV with the following columns: Criteria, Rate
+
+  do not make a file, just a text formatted in csv
+                    </pre>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Prompt 2 -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingHuotala">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseHuotala" aria-expanded="false" aria-controls="collapseHuotala">
+                    <input class="form-check-input me-2" type="radio" name="prompt" value="huotala" />
+                    Huotala (2024)
+                  </button>
+                </h2>
+                <div id="collapseHuotala" class="accordion-collapse collapse" aria-labelledby="headingHuotala"
+                  data-bs-parent="#promptAccordion">
+                  <div class="accordion-body">
+                    <pre class="bg-light p-3 rounded" id="huotalaTemplate">
+
+  Role: You are a software engineering researcher conducting a systematic literature review (SLR).
+
+  Task: Evaluate a primary study using each individual **inclusion/exclusion criterion**
+
+  **Likert scale**
+  - **Value:** An integer from \`1\` to \`7\`
+  - **Interpretation:** Using a 1-7 Likert scale (1 - Strongly disagree,
+  2 - Disagree, 3 - Somewhat disagree, 4 - Neutral, 5 - Somewhat agree, 6 - Agree, 7 - Strongly agree,), rate your agreement with the following criteria (only number). 
+  For inclusion criteria (IC):
+  Higher ratings (6-7) = study meets the criterion → supports inclusion
+  Lower ratings (1-3) = study fails the criterion → supports exclusion
+
+  For exclusion criteria (EC):
+  Higher ratings (6-7) = study meets the criterion → supports exclusion
+  Lower ratings (1-3) = study fails the criterion → supports inclusion
+
+  ### Inclusion and exclusion criteria:
+  ${criteriaText}
+
+  ### Additional instructions:
+  ${instructions}
+
+  ### Primary study:
+  **Title:** 
+  """ 
+  ${title}
+  """
+
+  **Abstract:** 
+  """
+  ${abstract}
+  """
+
+  **Keywords:** 
+  """
+  ${keywords}
+  """
+
+  **Publication venue:** 
+  """
+  ${publication}
+  """
+
+  **Publication date:** 
+  """
+  ${date}
+  """
+
+  give me the result in CSV with the following columns: Criteria, Rate
+
+  do not make a file, just a text formatted in csv
+                    </pre>
+                  </div>
+                </div>
+              </div>
+
+              <!--
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingThode">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseThode" aria-expanded="false" aria-controls="collapseThode">
+                    <input class="form-check-input me-2" type="radio" name="prompt" value="thode" />
+                    Thode (2024)
+                  </button>
+                </h2>
+                <div id="collapseThode" class="accordion-collapse collapse" aria-labelledby="headingThode"
+                  data-bs-parent="#promptAccordion">
+                  <div class="accordion-body">
+                    <pre class="bg-light p-3 rounded" id="thodeTemplate">
+  Perform the task to the best of your ability.
+
+  User Prompt:
+  Assume you are an expert professor in Software Engineering conducting a
+  systematic literature review.
+
+  Your task is to evaluate studies based on specific criteria:
+  Inclusion Criteria (IC): Inclusion criteria from primary candidate study
+  Exclusion Criteria (EC): Exclusion criteria from primary candidate study
+
+  For scoring, use only 1 or 0: Assign a score of 1 for strong alignment with all
+  inclusion criteria. Assign a score of 0 if any inclusion criteria are not satisfied or if
+  any exclusion criteria are met.
+
+  You’ll score studies based on their title, abstracts, keywords, publication venue and date.
+
+  Title: ${title}
+  Abstract: ${abstract}
+  Keywords: ${keywords}
+  Publication venue: ${publication}
+  Publication date: ${date}
+
+  For the response, use the following format: Response Format: Begin with ‘‘Score:
+  X’’ followed by ‘‘Justification:’’ which explains why the study was considered
+  relevant or not.
+                    </pre>
+                  </div>
+                </div>
+              </div>
+              -->
+
+            </div>
+          </div>
+
+          <div class="section-box">
+            <h3 class="section-title">📂 Upload JSON File</h3>
+
+            <div id="dropZone" class="border border-2 border-dashed rounded p-4 text-center bg-white">
+              <p class="mb-2">Arraste e solte o arquivo .bib ou xlsx aqui</p>
+              <p class="text-muted">ou</p>
+              <input type="file" id="jsonFileInput" accept=".json,.xlsx,.xls,.bib" class="d-none">
+              <button type="button" class="btn btn-outline-primary"
+                onclick="document.getElementById('jsonFileInput').click()">Selecionar Arquivo</button>
+              <p id="fileName" class="mt-3 text-success fw-bold"></p>
+            </div>
+          </div>
+
+          <!-- LLM Selection (igual) -->
+          <div class="section-box">
+            <h3 class="section-title">🤖 Language Models</h3>
+            <div class="row g-3 mb-3">
+              <div class="col-md-4">
+                <select class="form-select" id="model1" required>
+                  <option value="">1st Preference</option>
+                  <option>ChatGPT</option>
+                  <option>Gemini</option>
+                  <option>Deepsek</option>
+                  <option>Claude 3</option>
+                  <option>Llama 3</option>
+                  <option>Mistral</option>
+                  <option>Cohere</option>
+                  <option>Perplexity</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <select class="form-select" id="model2" required>
+                  <option value="">2nd Preference</option>
+                  <option>ChatGPT</option>
+                  <option>Gemini</option>
+                  <option>Deepsek</option>
+                  <option>Claude 3</option>
+                  <option>Llama 3</option>
+                  <option>Mistral</option>
+                  <option>Cohere</option>
+                  <option>Perplexity</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <select class="form-select" id="model3" required>
+                  <option value="">3rd Preference</option>
+                  <option>ChatGPT</option>
+                  <option>Gemini</option>
+                  <option>Deepsek</option>
+                  <option>Claude 3</option>
+                  <option>Llama 3</option>
+                  <option>Mistral</option>
+                  <option>Cohere</option>
+                  <option>Perplexity</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="text-end">
+            <button type="button" id="saveBtn" class="btn btn-success">💾 Save</button>
+            <button type="button" id="editBtn" class="btn btn-secondary d-none">✏️ Edit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de erro -->
+  <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="errorModalLabel">Erro</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="errorModalBody">
+          <!-- Mensagem será preenchida dinamicamente -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de sucesso -->
+  <div class="modal fade" id="saveModal" tabindex="-1" aria-labelledby="saveModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="saveModalLabel">Sucesso</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="saveModalBody">
+          <!-- Mensagem será preenchida dinamicamente -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<script>
+  // ============================
+  // Utility Functions
+  // ============================
+
+  function createInput(value = "", placeholder = "", required = true) {
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "form-control mb-2";
+    input.required = required;
+    input.value = value;
+    input.placeholder = placeholder;
+    return input;
+  }
+
+  function getCriteriaValues(containerId) {
+    return Array.from(document.querySelectorAll(`#${containerId} input`))
+      .map(i => i.value.trim())
+      .filter(Boolean);
+  }
+
+  function setCriteria(containerId, criteria = [], placeholder = "") {
+    const container = document.getElementById(containerId);
+    container.innerHTML = "";
+    criteria.forEach(c => container.appendChild(createInput(c, placeholder)));
+  }
+
+  function toggleFormState(isEnabled) {
+    document.querySelectorAll("#selectionForm input, #selectionForm select, #selectionForm textarea, #selectionForm button")
+      .forEach(el => {
+        if (!el.id.includes("editBtn")) el.disabled = !isEnabled;
+      });
+
+    document.getElementById("editBtn").classList.toggle("d-none", isEnabled);
+    document.getElementById("saveBtn").classList.toggle("d-none", !isEnabled);
+  }
+
+  function showModal(modalId, bodyContent, isHtml = false) {
+    const modal = new bootstrap.Modal(document.getElementById(modalId));
+    const body = document.getElementById(`${modalId}Body`);
+    if (isHtml) body.innerHTML = bodyContent;
+    else body.innerText = bodyContent;
+    modal.show();
+  }
+
+
+  // ============================
+  // Criteria Management
+  // ============================
+
+  // Generic function used by both inclusion and exclusion criteria
+  function addCriteria(containerId) {
+    const container = document.getElementById(containerId);
+    const placeholder =
+      containerId === "inclusionCriteria"
+        ? "Inclusion Criterion"
+        : "Exclusion Criterion";
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "form-control mb-2";
+    input.placeholder = placeholder;
+    input.required = true;
+
+    container.appendChild(input);
+  }
+
+  // ============================
+  // Data Handling
+  // ============================
+
+  function collectFormData() {
+    return {
+      studyTitle: document.getElementById("studyTitle").value,
+      studyAbstract: document.getElementById("studyAbstract").value,
+      studyKeywords: document.getElementById("studyKeywords").value,
+      searchString: document.getElementById("searchString").value,
+      inclusionCriteria: getCriteriaValues("inclusionCriteria"),
+      exclusionCriteria: getCriteriaValues("exclusionCriteria"),
+      prompt: document.querySelector("input[name='prompt']:checked")?.value,
+      model1: document.getElementById("model1").value,
+      model2: document.getElementById("model2").value,
+      model3: document.getElementById("model3").value
+    };
+  }
+
+  function saveData(data) {
+    localStorage.setItem("preferencesData", JSON.stringify(data));
+  }
+
+  function loadData() {
+    const saved = localStorage.getItem("preferencesData");
+    return saved ? JSON.parse(saved) : null;
+  }
+
+  // ============================
+  // Template Generation
+  // ============================
+
+  function buildCriteriaText(inclusion, exclusion) {
+    const inc = inclusion.map((c, i) => `- IC${i + 1}: ${c}`);
+    const exc = exclusion.map((c, i) => `- EC${i + 1}: ${c}`);
+    return [...inc, ...exc].join("\n");
+  }
+
+  function generateTemplate(promptType, data, criteriaText) {
+    if (!promptType || !templates[promptType]) return "";
+
+    const dummyData = {
+      title: "Dummy Study Title",
+      abstract: data.studyAbstract,
+      keywords: data.studyKeywords,
+      venue: "Dummy Venue",
+      date: "2024-01-01",
+      criteria: criteriaText
+    };
+
+    return templates[promptType](
+      dummyData.title,
+      dummyData.abstract,
+      dummyData.keywords,
+      dummyData.venue,
+      dummyData.date,
+      dummyData.criteria
+    );
+  }
+
+  // ============================
+  // Event Handlers
+  // ============================
+
+  function handleSave() {
+    const form = document.getElementById("selectionForm");
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const data = collectFormData();
+    if (data.inclusionCriteria.length < 1 || data.exclusionCriteria.length < 1) {
+      showModal("errorModal", "É necessário pelo menos 1 critério de inclusão e 1 de exclusão.");
+      return;
+    }
+
+    saveData(data);
+
+    const criteriaText = buildCriteriaText(data.inclusionCriteria, data.exclusionCriteria);
+    const templateText = generateTemplate(data.prompt, data, criteriaText);
+
+    toggleFormState(false);
+
+    const successMessage = `
+        <p>The review data has been successfully stored! You can now start selecting the studies.</p>
+        <p>Your prompt will look more or less like the example below. If you want to change the inclusion and exclusion criteria, click in "edit" button and save changes.</p>
+        <pre class="bg-light p-2 rounded" style="max-height:300px; overflow:auto;">${templateText}</pre>
+      `;
+    showModal("saveModal", successMessage, true);
+  }
+
+  function handleEdit() {
+    toggleFormState(true);
+  }
+
+  function restoreForm() {
+    const data = loadData();
+    if (!data) {
+      toggleFormState(true);
+      return;
+    }
+
+    document.getElementById("studyTitle").value = data.studyTitle || "";
+    document.getElementById("studyAbstract").value = data.studyAbstract || "";
+    document.getElementById("studyKeywords").value = data.studyKeywords || "";
+    document.getElementById("searchString").value = data.searchString || "";
+
+    setCriteria("inclusionCriteria", data.inclusionCriteria, "Inclusion Criterion");
+    setCriteria("exclusionCriteria", data.exclusionCriteria, "Exclusion Criterion");
+
+    if (data.prompt) {
+      const radio = document.querySelector(`input[name='prompt'][value='${data.prompt}']`);
+      if (radio) radio.checked = true;
+    }
+
+    document.getElementById("model1").value = data.model1 || "";
+    document.getElementById("model2").value = data.model2 || "";
+    document.getElementById("model3").value = data.model3 || "";
+
+    toggleFormState(false);
+  }
+
+  // ============================
+  // Initialization
+  // ============================
+
+  window.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("saveBtn").addEventListener("click", handleSave);
+    document.getElementById("editBtn").addEventListener("click", handleEdit);
+
+    // Add initial empty fields if no saved data
+    if (!loadData()) {
+      setCriteria("inclusionCriteria", [""], "Inclusion Criterion");
+      setCriteria("exclusionCriteria", [""], "Exclusion Criterion");
+    }
+
+    restoreForm();
+  });
+
+  const dropZone = document.getElementById("dropZone");
+  const fileInput = document.getElementById("jsonFileInput");
+  const fileNameDisplay = document.getElementById("fileName");
+
+  // Highlight ao arrastar
+  dropZone.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropZone.classList.add("bg-light");
+  });
+
+  dropZone.addEventListener("dragleave", () => {
+    dropZone.classList.remove("bg-light");
+  });
+
+  // Drag & Drop
+  dropZone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropZone.classList.remove("bg-light");
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+    processFile(file);
+  });
+
+  // Input via botão
+  fileInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    processFile(file);
+  });
+
+  // -----------------------------
+  // Funções de tratamento
+  // -----------------------------
+  function processFile(file) {
+    const name = file.name.toLowerCase();
+
+    if (name.endsWith(".json")) {
+      handleJsonFile(file);
+    } else if (name.endsWith(".bib")) {
+      handleBibFile(file);
+    } else if (name.endsWith(".xlsx") || name.endsWith(".xls")) {
+      handleExcelFile(file); // Agora cobre ambos
+    } else {
+      alert("Por favor selecione um arquivo .json, .bib, .xlsx ou .xls válido.");
+    }
+  }
+
+  function handleJsonFile(file) {
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      try {
+        const jsonData = JSON.parse(event.target.result);
+        saveFile(jsonData, file.name);
+      } catch (err) {
+        alert("O arquivo selecionado não é um JSON válido.");
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function handleBibFile(file) {
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      try {
+        const bibText = event.target.result;
+        let jsonData = bibToJson(bibText);
+
+        jsonData = jsonData.filter(
+          (entry) => entry.ID !== "unknown" && entry.ENTRYTYPE !== "unknown"
+        );
+
+        if (jsonData.length === 0) {
+          alert("Nenhuma entrada válida encontrada no arquivo .bib.");
+          return;
+        }
+
+        saveFile(jsonData, file.name + " (convertido de .bib)");
+      } catch (err) {
+        alert("O arquivo .bib não pôde ser convertido.");
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function bibToJson(bibText) {
+    const entries = bibText.split(/@/).filter(Boolean);
+    return entries.map((entry) => {
+      const typeMatch = entry.match(/^(\w+){([^,]+),/);
+      const type = typeMatch ? typeMatch[1] : "unknown";
+      const id = typeMatch ? typeMatch[2] : "unknown";
+      const fields = {};
+      const fieldRegex = /(\w+)\s*=\s*[{"]([^}"]+)[}"]/g;
+      let match;
+      while ((match = fieldRegex.exec(entry)) !== null) {
+        fields[match[1]] = match[2];
+      }
+      return { ID: id, ENTRYTYPE: type, ...fields };
+    });
+  }
+
+  // Agora trata .xls e .xlsx
+  function handleExcelFile(file) {
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      try {
+        const data = new Uint8Array(event.target.result);
+        const workbook = XLSX.read(data, { type: "array" });
+
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+
+        // Converte para JSON (primeira linha = headers)
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+
+        if (jsonData.length === 0) {
+          alert("Planilha vazia ou sem dados válidos.");
+          return;
+        }
+
+        saveFile(jsonData, file.name + " (convertido de Excel)");
+      } catch (err) {
+        console.error(err);
+        alert("O arquivo Excel não pôde ser convertido.");
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  // Salvar no localStorage
+  function saveFile(jsonData, fileName) {
+    localStorage.setItem("uploadedJsonFile", JSON.stringify(jsonData));
+    localStorage.setItem("uploadedJsonFileName", fileName);
+    fileNameDisplay.textContent = "Arquivo carregado: " + fileName;
+  }
+  // Função para criar um input com botão de exclusão
+  function createCriteriaInput(value = "", placeholder = "") {
+    const wrapper = document.createElement("div");
+    wrapper.className = "d-flex mb-2 align-items-center";
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "form-control me-2";
+    input.required = true;
+    input.value = value;
+    input.placeholder = placeholder;
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.type = "button";
+    deleteBtn.className = "btn btn-outline-danger btn-sm";
+    deleteBtn.innerHTML = "🗑️";
+    deleteBtn.onclick = () => wrapper.remove();
+
+    wrapper.appendChild(input);
+    wrapper.appendChild(deleteBtn);
+
+    return wrapper;
+  }
+
+  // Atualiza a função setCriteria para usar createCriteriaInput
+  function setCriteria(containerId, criteria = [], placeholder = "") {
+    const container = document.getElementById(containerId);
+    container.innerHTML = "";
+    criteria.forEach(c => container.appendChild(createCriteriaInput(c, placeholder)));
+  }
+
+  // Atualiza a função addCriteria para usar createCriteriaInput
+  function addCriteria(containerId) {
+    const placeholder =
+      containerId === "inclusionCriteria"
+        ? "Inclusion Criterion"
+        : "Exclusion Criterion";
+
+    const container = document.getElementById(containerId);
+    container.appendChild(createCriteriaInput("", placeholder));
+  }
+
+
+
+</script>
+<script>
+  $("#imports").load("components/imports.html");
+  $("#header").load("components/header.html");
+</script>
+
+</html>
