@@ -1,11 +1,11 @@
-# BM4LLM-SLR  
+# pAIrReview 
 **Bias Mitigation for LLM-Assisted Systematic Literature Reviews**  
 
 BM4LLM-SLR is a model designed to support researchers during the **study selection phase** of **Systematic Literature Reviews (SLRs)**. Its primary objective is to enhance the use of **Large Language Models (LLMs)** by making them more **reliable, transparent, and less prone to bias**.  
 
 ---
 
-## 🚀 Why BM4LLM-SLR?  
+## 🚀 Why pAIrReview?  
 
 Systematic Literature Reviews are critical for consolidating scientific evidence but require **substantial manual effort** and are susceptible to **human error**. While **LLMs** can assist in this process, they may also introduce **bias or inconsistencies** if applied in isolation.  
 
