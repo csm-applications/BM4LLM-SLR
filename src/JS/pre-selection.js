@@ -1,41 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <title>Phase 01 - Pre-selection</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="assets/templates.js"></script>
-</head>
-
-<body class="bg-light" style="height: 100vh;">
-
-  <div id="header"></div>
-
-  <div class="container py-5">
-    <div class="row justify-content-center">
-      <div class="col-lg-12 bg-white p-4 rounded shadow-sm">
-        <h2 class="mb-4 text-center">Pre-selection</h2>
-
-        <div class="d-flex justify-content-end mb-4">
-          <div class="input-group" style="max-width: 500px;">
-            <input type="text" class="form-control" placeholder="Enter LLM URL"
-              value="http://localhost:11434/api/chat" id="llmUrlInput">
-            <button class="btn btn-info" id="generateBtn">Generate Responses from LLM</button>
-          </div>
-        </div>
-
-        <div id="cardsContainer"></div>
-        <button class="btn btn-success save-btn mt-4">Save Responses</button>
-      </div>
-    </div>
-  </div>
-
-  <!--LLM controls-->
-  <script>
-    // Função que dispara o envio em sequência
+ // Função que dispara o envio em sequência
     async function generateAllResponses() {
       const startTime = performance.now(); // ⏱️ Start timer
 
@@ -120,11 +83,8 @@
       document.querySelector("#generateBtn")
         .addEventListener("click", generateAllResponses);
     });
-  </script>
 
 
-  <!--page controls-->
-  <script>
     // ============================
     // Utility functions
     // ============================
@@ -327,9 +287,3 @@
       $("#header").load("components/header.html");
       loadDataset();
     });
-
-  </script>
-
-</body>
-
-</html>

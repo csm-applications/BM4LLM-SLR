@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Study Decisions Table</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <div id="imports"></div>
+  <script src="assets/templates.js"></script>
+  <link rel="stylesheet" href="../src/CSS/survey.css">
+  <script src="../src/JS/survey.js"></script>
+</head>
+
+<body>
+
+  <div id="header"></div>
+
+  <div class="form-wrapper">
+    <iframe
+      src="https://docs.google.com/forms/d/e/1FAIpQLSdf6sb-keXg71nUi2YW7a3PUYKUZ9Kh6G9570NHDlnjbUKE6A/viewform?embedded=true">
+      Carregando…
+    </iframe>
+  </div>
+
+</body>
+
+
+<div id="footer"></div>
+
+<script>
+  $("#imports").load("../src/components/imports.html");
+  $("#header").load("../src/components/header.html");
+  $("#footer").load("../src/components/footer.html");
+</script>
+
+</html>

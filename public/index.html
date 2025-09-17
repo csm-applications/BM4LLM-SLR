@@ -4,90 +4,49 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BM4LLM-SLR</title>
+  <title>pAIrReview</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
   <div id="imports"></div>
+  <link rel="stylesheet" href="../src/CSS/index.css">
 </head>
 
-<style>
-  .responsive-iframe {
-    position: relative;
-    padding-bottom: 56.25%;
-    /* 16:9 aspect ratio */
-    height: 0;
-    overflow: hidden;
-    max-width: 100%;
-    background: #000;
-    /* optional */
-    border-radius: 8px;
-    /* optional */
-  }
-
-  .responsive-iframe iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: 0;
-  }
-</style>
-
-
-
 <body class="bg-light" style="height: 100vh;">
-
   <div id="header"></div>
-
-  <!-- Main Content -->
   <div class="container text-center mt-5">
     <div class="row justify-content-center">
       <div class="col-md-10 col-lg-8 p-5 bg-white rounded shadow-sm">
 
-
-        <h4 class="mb-5">Large Language Models to Support Systematic Literature Reviews</h4>
-
-        <p>Welcome to our tool to support the usage of Large Language Models (LLMs) in the Systematic Literature Review (SLR) process. Please, access the top-left menu to navigate in the tool pages.</p>
+        <img width="100%" src="../src/images/pAIrReview.jpg" alt="pAIrReview Logo">
 
 
-         <div class="container my-4">
-          <h4 class="mt-5">Supplementary material</h4>
-          <p>
-            Access the slides presentation
-            <a href="https://docs.google.com/presentation/d/e/2PACX-1vSUV05pu5nJQScEhYIZq6JmCk8ELu7PfYdQUrBaSiZv7BkSWxisAkt6FxbXly_fcQ/pub?start=false&loop=true&delayms=30000"
-              target="_blank">
-              here
-            </a>
-          </p>
+        <h4 class="mb-5 mt-5">pAIrReview - Human–AI Collaboration for <br> Systematic Literature Reviews</h4>
 
-          <div class="responsive-iframe">
-            <iframe
-              src="https://docs.google.com/presentation/d/e/2PACX-1vSUV05pu5nJQScEhYIZq6JmCk8ELu7PfYdQUrBaSiZv7BkSWxisAkt6FxbXly_fcQ/pubembed?start=false&loop=false&delayms=3000"
-              frameborder="0" allowfullscreen mozallowfullscreen webkitallowfullscreen>
-            </iframe>
-          </div>
-        </div>
+        <p style="text-align: justify;">Welcome to our tool to support the usage of Large Language Models (LLMs) in the
+          Systematic Literature Review
+          (SLR) process. Please, access the top-left menu to navigate in the tool pages.</p>
 
 
-      
-          <!-- Why section -->
-        <h4 class="mt-5">Why do we need a model for using LLM in SLR?</h4>
+        <!-- Why section -->
+        <h4 class="mt-5">Why do we need caution to use AI (more specifically LLMs) in SLR?</h4>
         <p style="text-align: justify;">
           Systematic Literature Reviews are essential for building scientific evidence, but they are labor-intensive.
-          LLMs have the potential to assist, but they may introduce bias or inconsistencies if used alone. Therefore, to use LLMs in this SLR process may need additional layers of bias mitigation to increase the trustworthiness of outputs.
+          LLMs have the potential to assist, but they may introduce bias or inconsistencies if used alone. Therefore, to
+          use LLMs in this SLR process may need additional layers of bias mitigation to increase the trustworthiness of
+          outputs.
         </p>
 
 
-        <h4 class="mt-5"> What is BM4LLM-SLR?
-        </h4>
+        <h4 class="mt-3"> What is BM4LLM-SLR?</h4>
         <!-- Short description -->
         <p style="text-align: justify;">
           BM4LLM-SLR means <u>B</u>ias <u>M</u>itigation for <u>LLM</u>-Assisted <u>S</u>ystematic <u>L</u>iterature
-          <u>R</u>eviews. BM4LLM-SLR is a method designed to support researchers in the study selection phase of Systematic Literature Reviews (SLRs), making the use of Large Language Models (LLMs) more reliable and transparent.
+          <u>R</u>eviews. BM4LLM-SLR is a method designed to support researchers in the study selection phase of
+          Systematic Literature Reviews (SLRs), making the use of Large Language Models (LLMs) more reliable and
+          transparent.
         </p>
 
-      
-       
+
+
 
         <!-- FAQ Accordion -->
         <h4 class="mt-5">FAQ</h4>
@@ -225,67 +184,59 @@
 
         <div class="container my-4">
           <h3 class="mb-3">Systematic Literature Reviews Guidelines</h3>
-          <table class="table table-striped table-bordered table-hover align-middle">
-            <thead class="table-dark">
-              <tr>
-                <th scope="col">Authors</th>
-                <th scope="col">Title</th>
-                <th scope="col">Year</th>
-                <th scope="col">Link</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Kitchenham, B.; Charters, S.</td>
-                <td>Guidelines for Performing Systematic Literature Reviews in Software Engineering (EBSE-2007-01)</td>
-                <td>2007</td>
-                <td><a href="https://legacyfileshare.elsevier.com/promis_misc/525444systematicreviewsguide.pdf"
-                    target="_blank" class="btn btn-sm btn-primary">Access</a></td>
-              </tr>
-              <tr>
-                <td>Brereton, P.; Kitchenham, B.; Budgen, D.; Turner, M.; Khalil, M.</td>
-                <td>Lessons from Applying the Systematic Literature Review Process within the Software Engineering
-                  Domain</td>
-                <td>2007</td>
-                <td><a href="https://www.sciencedirect.com/science/article/pii/S016412120600197X" target="_blank"
-                    class="btn btn-sm btn-primary">Access</a></td>
-              </tr>
-              <tr>
-                <td>Wohlin, C.</td>
-                <td>Guidelines for Snowballing in Systematic Literature Studies and a Replication in Software
-                  Engineering</td>
-                <td>2014</td>
-                <td>
-                  <a href="https://dl.acm.org/doi/10.1145/2601248.2601268" target="_blank"
-                    class="btn btn-sm btn-primary me-1">Access</a>
-                </td>
-              </tr>
-              <tr>
-                <td>Wohlin, C.; Mendes, E.; Romero Felizardo, K.; Kalinowski, M.</td>
-                <td>Guidelines for the Search Strategy to Update Systematic Literature Reviews in Software Engineering
-                </td>
-                <td>2020</td>
-                <td><a href="https://arxiv.org/abs/2006.05542" target="_blank" class="btn btn-sm btn-primary">Access</a>
-                </td>
-              </tr>
-              <tr>
-                <td>Kitchenham, B.; Budgen, D.; Brereton, P.</td>
-                <td>Evidence-Based Software Engineering and Systematic Reviews (book)</td>
-                <td>2015</td>
-                <td><a
-                    href="https://www.taylorfrancis.com/books/edit/10.1201/b19467/evidence-based-software-engineering-systematic-reviews-barbara-ann-kitchenham-david-budgen-pearl-brereton"
-                    target="_blank" class="btn btn-sm btn-primary">Access</a></td>
-              </tr>
-            </tbody>
-          </table>
+          <ul class="list-unstyled" style="text-align: left;">
+            <li class="mb-2">
+              <i class="bi bi-file-earmark-text me-2"></i>
+
+              Kitchenham, B.; Charters, S. - <em>Guidelines for Performing Systematic Literature Reviews in Software
+                Engineering (EBSE-2007-01)</em>
+              <a href="https://legacyfileshare.elsevier.com/promis_misc/525444systematicreviewsguide.pdf"
+                target="_blank" class="text-decoration-none">
+                <i class="bi bi-box-arrow-up-right ms-1"></i>
+              </a>
+            </li>
+            <li class="mb-2">
+              <i class="bi bi-file-earmark-text me-2"></i>
+
+              Brereton, P.; Kitchenham, B.; Budgen, D.; Turner, M.; Khalil, M. - <em>Lessons from Applying the
+                Systematic Literature Review Process within the Software Engineering Domain</em>
+              <a href="https://www.sciencedirect.com/science/article/pii/S016412120600197X" target="_blank"
+                class="text-decoration-none">
+                <i class="bi bi-box-arrow-up-right ms-1"></i>
+              </a>
+            </li>
+            <li class="mb-2">
+              <i class="bi bi-file-earmark-text me-2"></i>
+
+              Wohlin, C. - <em>Guidelines for Snowballing in Systematic Literature Studies and a Replication in
+                Software Engineering</em>
+              <a href="https://dl.acm.org/doi/10.1145/2601248.2601268" target="_blank" class="text-decoration-none">
+                <i class="bi bi-box-arrow-up-right ms-1"></i>
+              </a>
+            </li>
+            <li class="mb-2">
+              <i class="bi bi-file-earmark-text me-2"></i>
+
+              Wohlin, C.; Mendes, E.; Romero Felizardo, K.; Kalinowski, M. - <em>Guidelines for the Search Strategy to
+                Update Systematic Literature Reviews in Software Engineering</em>
+              <a href="https://arxiv.org/abs/2006.05542" target="_blank" class="text-decoration-none">
+                <i class="bi bi-box-arrow-up-right ms-1"></i>
+              </a>
+            </li>
+            <li class="mb-2">
+              <i class="bi bi-book me-2"></i>
+
+              Kitchenham, B.; Budgen, D.; Brereton, P. - <em>Evidence-Based Software Engineering and Systematic
+                Reviews (book)</em>
+              <a href="https://www.taylorfrancis.com/books/edit/10.1201/b19467/evidence-based-software-engineering-systematic-reviews-barbara-ann-kitchenham-david-budgen-pearl-brereton"
+                target="_blank" class="text-decoration-none">
+                <i class="bi bi-box-arrow-up-right ms-1"></i>
+              </a>
+            </li>
+          </ul>
         </div>
 
 
-
-        <!-- Footer -->
-        <footer class="mt-5 text-muted small">
-          <p>This is an experimental and open-source tool. Use with caution and adapt to your research context.</p>
-        </footer>
 
       </div>
     </div>
@@ -294,9 +245,13 @@
 
 </body>
 
+<div id="footer"></div>
+
+<script src="../src/JS/index.js"></script>
 <script>
-  $("#imports").load("components/imports.html");
-  $("#header").load("components/header.html");
+  $("#imports").load("../src/components/imports.html");
+  $("#header").load("../src/components/header.html");
+  $("#footer").load("../src/components/footer.html");
 </script>
 
 </html>

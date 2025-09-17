@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Review</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <div id="imports"></div>
+  <link rel="stylesheet" href="../src/CSS/review.css">
+</head>
+
+
+<body class="bg-light">
+
+  <div id="header"></div>
+
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-10 bg-white p-5 rounded shadow-sm">
+
+        <h2 class="mb-4 text-center">Output Review</h2>
+
+        <!-- Confidence Settings -->
+        <div class="card mb-4 p-3">
+          <h4 class="card-title mb-3">Confidence Level Settings</h4>
+          <form id="confidence-form" class="row row-cols-1 row-cols-md-2 g-3">
+
+            <div class="col">
+              <h5>Inclusion Criteria</h5>
+              <div class="mb-2">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="inclusion-mode" id="inc-all" value="all" checked>
+                  <label class="form-check-label" for="inc-all">Match All</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="inclusion-mode" id="inc-one" value="one">
+                  <label class="form-check-label" for="inc-one">Match One</label>
+                </div>
+              </div>
+              <div id="inclusion-fields"></div>
+            </div>
+
+            <div class="col">
+              <h5>Exclusion Criteria</h5>
+              <div class="mb-2">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="exclusion-mode" id="exc-all" value="all">
+                  <label class="form-check-label" for="exc-all">Match All</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="exclusion-mode" id="exc-one" value="one" checked>
+                  <label class="form-check-label" for="exc-one">Match One</label>
+                </div>
+              </div>
+              <div id="exclusion-fields"></div>
+            </div>
+
+          </form>
+        </div>
+
+        <!-- Summary -->
+        <div id="summary" class="alert alert-info mb-4">Loading...</div>
+
+        <!-- Studies Display -->
+        <div id="studies" class="row g-4"></div>
+
+        <!-- Actions -->
+        <div class="my-4 text-end">
+          <button id="download-btn" class="btn btn-success">Download pre-screening assets</button>
+          <a class="btn btn-primary" href="hil-confidence.html">Go to Phase 2</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</body>
+
+
+<div id="footer"></div>
+
+
+<script src="../src/JS/review.js"></script>
+<script>
+  $("#imports").load("../src/components/imports.html");
+  $("#header").load("../src/components/header.html");
+  $("#footer").load("../src/components/footer.html");
+</script>
+
+</html>

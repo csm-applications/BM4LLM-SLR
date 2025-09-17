@@ -1,57 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Step 4 – LLM Re-Evaluation (Low Confidence)</title>
-
-  <!-- Bootstrap + jQuery -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-  <!-- JSZip -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.0/jszip.min.js"></script>
-
-  <!-- Templates -->
-  <script src="assets/templates.js"></script>
-
-  <style>
-    .output-box {
-      resize: vertical;
-    }
-
-    .copy-btn {
-      font-size: 0.9rem;
-    }
-  </style>
-</head>
-
-<body class="bg-light" style="min-height:100vh;">
-  <div id="header"></div>
-
-  <div class="container py-5">
-    <div class="row justify-content-center">
-      <div class="col-lg-12 bg-white p-5 rounded shadow-sm">
-        <h2 class="mb-4 text-center">Low Confidence Mode</h2>
-
-        <div class="d-flex justify-content-end mb-4">
-          <div class="input-group" style="max-width: 500px;">
-            <input type="text" class="form-control" placeholder="Enter LLM URL"
-              value="http://localhost:11434/api/chat" id="llmUrlInput">
-            <button class="btn btn-info" id="generateBtn">Generate All Responses</button>
-          </div>
-        </div>
-
-        <div id="cardsContainer"></div>
-        <button class="btn btn-success save-btn mt-4">Save and Continue</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    let excludedStudies = [];
+    // ============================
+    // Load data and generate cards
+    // ============================
+    let studiesData = [];
     const templateType = 'felizardo';
 
     function buildCriteriaText(inclusion, exclusion) {
@@ -60,45 +10,44 @@
       return [...inc, ...exc].join("\n");
     }
 
-    function generatePrompt(study, criteria) {
+    function generatePromptWithCriteria(study, criteriaText) {
       const title = study.title || "—";
       const abstract = study.abstract || "—";
       const keywords = study.keywords || "";
-      const publication = study.journal || "—";
-      const date = study.date || "—";
-      return templates[templateType](title, abstract, keywords, publication, date, criteria);
+      const publication = study.journal || study.source || "—";
+      const date = study.year || "—";
+      return templates.felizardo(title, abstract, keywords, publication, date, criteriaText);
     }
 
     function loadStudies() {
-      const raw = localStorage.getItem("excludedStudies");
-      if (!raw) {
-        alert("No excluded studies found.");
-        window.location.href = "step4.html";
+      const uploadedData = localStorage.getItem('excludedStudies');
+      if (!uploadedData) {
+        alert('No study data found. Please upload assets first.');
+        window.location.href = 'step4.html';
         return;
       }
-      excludedStudies = JSON.parse(raw);
+      studiesData = JSON.parse(uploadedData);
 
       const savedData = JSON.parse(localStorage.getItem("preferencesData")) || {};
       const inclusionCriteria = savedData.inclusionCriteria || [];
       const exclusionCriteria = savedData.exclusionCriteria || [];
       const criteriaText = buildCriteriaText(inclusionCriteria, exclusionCriteria);
 
-      const container = document.getElementById("cardsContainer");
-      container.innerHTML = "";
+      const container = document.getElementById('cardsContainer');
+      container.innerHTML = '';
 
-      excludedStudies.forEach((study, idx) => {
-        const prompt = generatePrompt(study, criteriaText);
-        const card = document.createElement("div");
-        card.className = "card mb-4 w-100";
+      studiesData.forEach((study, idx) => {
+        const prompt = generatePromptWithCriteria(study, criteriaText);
+        const card = document.createElement('div');
+        card.className = 'card mb-4 w-100';
+        const textareaId = `outputBox${idx}`;
         const promptId = `promptText${idx}`;
-        const textarea2 = `outputBox2_${idx}`;
-        const textarea3 = `outputBox3_${idx}`;
 
         card.innerHTML = `
           <div class="card-body">
             <h5 class="card-title">${idx + 1}. ${study.title || "—"}</h5>
+            <p><strong>Authors:</strong> ${study.author || "—"}</p>
             <p><strong>Abstract:</strong> ${study.abstract || "—"}</p>
-            <p><strong>Keywords:</strong> ${study.keywords || "—"}</p>
 
             <div class="accordion mb-3" id="promptAccordion${idx}">
               <div class="accordion-item">
@@ -113,8 +62,7 @@
                     <pre id="${promptId}" class="bg-light p-3 rounded" style="white-space: pre-wrap;">${prompt}</pre>
                     <div class="d-flex gap-2 mt-2">
                       <button class="btn btn-sm btn-primary copy-btn" data-target="${promptId}">Copy</button>
-                      <button class="btn btn-sm btn-success" onclick="sendPrompt('${promptId}', '${textarea2}')">Send to 2nd Model</button>
-                      <button class="btn btn-sm btn-success" onclick="sendPrompt('${promptId}', '${textarea3}')">Send to 3rd Model</button>
+                      <button class="btn btn-sm btn-success" onclick="sendPrompt('${promptId}', '${textareaId}')">Send to Model</button>
                     </div>
                   </div>
                 </div>
@@ -122,39 +70,35 @@
             </div>
 
             <div class="mb-3">
-              <label class="form-label">Second Model Decision:</label>
-              <textarea id="${textarea2}" class="form-control output-box" rows="4" placeholder="Paste or generate response..."></textarea>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Third Model Decision:</label>
-              <textarea id="${textarea3}" class="form-control output-box" rows="4" placeholder="Paste or generate response..."></textarea>
+              <label class="form-label">LLM Response:</label>
+              <textarea id="${textareaId}" class="form-control output-box" rows="4" placeholder="Response will appear here..."></textarea>
             </div>
           </div>
         `;
         container.appendChild(card);
       });
-
       bindSaveButton();
     }
 
     function bindSaveButton() {
-      document.querySelector('.save-btn').addEventListener('click', () => {
-        const cards = document.querySelectorAll('.card');
-        for (let i = 0; i < cards.length; i++) {
-          const output2 = cards[i].querySelector(`#outputBox2_${i}`).value.trim();
-          const output3 = cards[i].querySelector(`#outputBox3_${i}`).value.trim();
-          if (!output2 || !output3) {
-            alert(`Study ${i + 1}: missing one or both responses.`);
-            return;
+      document.querySelectorAll('.save-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const cards = document.querySelectorAll('.card');
+          for (let i = 0; i < cards.length; i++) {
+            const outputText = cards[i].querySelector('.output-box').value.trim();
+            if (!outputText) {
+              alert(`Study ${i + 1}: missing response.`);
+              return;
+            }
+            studiesData[i].secondModelDecision = outputText;
           }
-          excludedStudies[i].secondModelDecision = output2;
-          excludedStudies[i].thirdModelDecision = output3;
-        }
-        localStorage.setItem('excludedStudies', JSON.stringify(excludedStudies));
-        window.location.href = 'auto-consensus.html';
+          localStorage.setItem('excludedStudies', JSON.stringify(studiesData));
+          // Redireciona para consensus.html
+          window.location.href = 'consensus.html';
+        });
       });
     }
+
 
     // ============================
     // LLM integration
@@ -204,9 +148,11 @@
     async function generateAllResponses() {
       const cards = document.querySelectorAll('.card');
       for (let i = 0; i < cards.length; i++) {
+        const textareaId = `outputBox${i}`;
         const promptId = `promptText${i}`;
-        await sendPrompt(promptId, `outputBox2_${i}`);
-        await sendPrompt(promptId, `outputBox3_${i}`);
+        const textarea = document.getElementById(textareaId);
+        textarea.value = `⏳ Generating response for study ${i + 1}...`;
+        await sendPrompt(promptId, textareaId);
       }
       alert("All responses generated!");
     }
@@ -230,7 +176,3 @@
         });
       }
     });
-  </script>
-</body>
-
-</html>

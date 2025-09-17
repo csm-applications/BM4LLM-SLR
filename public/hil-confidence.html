@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Confidence Selection</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <script src="../src/templates/templates.js"></script>
+  <div id="imports"></div>
+  <link rel="stylesheet" href="../src/CSS/hil-confidence.css">
+
+
+</head>
+
+<body class="bg-light" style="height: 100vh;">
+  <div id="header"></div>
+
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-10 bg-white p-5 rounded shadow-sm">
+        <h2 class="mb-4 text-center">Start Looping</h2>
+
+        <div class="explanation">
+          <p>Until now, only the automatic selection has been performed. The confidence threshold has been set and
+            allows including or excluding studies based on the criteria scores.</p>
+          <p>Now, we will begin the <strong>Human-in-the-Loop (HIL)</strong> phase. Please select a confidence level:
+          </p>
+          <ul>
+            <li><strong>Low confidence</strong>: another LLM will assist. Recommended for pilot tests.</li>
+            <li><strong>High confidence</strong>: careful human review. Recommended for final studies.</li>
+          </ul>
+        </div>
+
+        <div class="row g-3 mb-4">
+          <div class="col-md-6"><button id="btn-low" class="btn confidence-btn btn-low">Low Confidence</button></div>
+          <div class="col-md-6"><button id="btn-high" class="btn confidence-btn btn-high">High Confidence</button></div>
+        </div>
+
+        <div class="upload-section">
+          <h5>Upload first_llm_screnning_assets.ZIP</h5>
+          <p class="text-muted">Upload ZIP containing JSON files: metadata.json, included.json, excluded.json,
+            fullRunStudies.json.</p>
+
+          <label for="uploadZip" class="dropzone" id="dropzone">
+            Drag & Drop ZIP here, or click to select
+            <input type="file" id="uploadZip" accept=".zip" />
+          </label>
+
+          <div id="uploadStatus" class="text-success mt-3" style="display: none;"></div>
+          <div id="uploadError" class="text-danger mt-3" style="display: none;"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</body>
+
+<div id="footer"></div>
+
+
+<script src="../src/JS/hil-confidence.js"></script>
+<script>
+  $("#imports").load("../src/components/imports.html");
+  $("#header").load("../src/components/header.html");
+  $("#footer").load("../src/components/footer.html");
+</script>
+
+</html>

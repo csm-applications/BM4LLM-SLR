@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>High-confidence</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <div id="imports"></div>
+  <script src="../src/templates/templates.js"></script>
+  <link rel="stylesheet" href="../src/CSS/hil-high.css">
+</head>
+
+<body class="bg-light" style="min-height:100vh;">
+  <div id="header"></div>
+
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-12 bg-white p-5 rounded shadow-sm">
+        <h2 class="mb-4 text-center">High Conficence Mode</h2>
+
+        <div class="d-flex justify-content-end mb-4">
+          <div class="input-group" style="max-width: 500px;">
+            <input type="text" class="form-control" placeholder="Enter LLM URL" value="http://localhost:11434/api/chat"
+              id="llmUrlInput">
+            <button class="btn btn-info" id="generateBtn">Generate All Responses</button>
+          </div>
+        </div>
+
+        <div id="cardsContainer"></div>
+        <button class="btn btn-success save-btn mt-4">Save & Go to sonsensus</button>
+      </div>
+    </div>
+  </div>
+</body>
+
+<div id="footer"></div>
+
+<script src="../src/JS/hil-high.js"></script>
+<script>
+  $("#imports").load("../src/components/imports.html");
+  $("#header").load("../src/components/header.html");
+  $("#footer").load("../src/components/footer.html");
+</script>
+
+
+</html>

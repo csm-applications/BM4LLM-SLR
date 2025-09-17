@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>My reviews</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <div id="imports"></div>
+  <link rel="stylesheet" href="../src/CSS/my-reviews.css">
+  <script src="../src/templates/templates.js"></script>
+</head>
+
+
+<body class="bg-light">
+
+  <div id="header"></div>
+
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+
+        <h2 class="mb-4 text-center">Preferences Setup</h2>
+
+        <form id="selectionForm">
+
+          <!-- Basic Informations -->
+          <div class="section-box">
+            <h3 class="section-title">📖 Basic Informations</h3>
+            <input type="text" class="form-control mb-3" id="studyTitle" placeholder="Study Title" required>
+            <textarea class="form-control mb-3" id="studyAbstract" rows="3" placeholder="Study Abstract"
+              required></textarea>
+            <input type="text" class="form-control mb-3" id="studyKeywords" placeholder="Keywords (comma separated)"
+              required>
+          </div>
+
+          <!-- Protocol Informations -->
+          <div class="section-box">
+            <h3 class="section-title">⚙️ Protocol Informations</h3>
+            <input type="text" class="form-control mb-3" id="searchString" placeholder="Search String" required>
+
+            <div class="mb-3">
+              <label class="form-label fw-bold">Inclusion Criteria</label>
+              <div id="inclusionCriteria"></div>
+              <button type="button" class="btn btn-sm btn-outline-primary mt-2"
+                onclick="addCriteria('inclusionCriteria')">+ Add
+                Inclusion Criteria</button>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-bold">Exclusion Criteria</label>
+              <div id="exclusionCriteria"></div>
+              <button type="button" class="btn btn-sm btn-outline-primary mt-2"
+                onclick="addCriteria('exclusionCriteria')">+ Add
+                Exclusion Criteria</button>
+            </div>
+          </div>
+
+          <!-- Prompt Template Selection -->
+          <div class="section-box">
+            <h3 class="section-title">📝 Prompt Template</h3>
+            <div class="accordion mb-4" id="promptAccordion">
+
+              <!-- Prompt 1 -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFelizardo">
+                  <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseFelizardo" aria-expanded="true" aria-controls="collapseFelizardo">
+                    <input class="form-check-input me-2" type="radio" name="prompt" value="felizardo" required />
+                    Felizardo (2024)
+                  </button>
+                </h2>
+                <div id="collapseFelizardo" class="accordion-collapse collapse show" aria-labelledby="headingFelizardo"
+                  data-bs-parent="#promptAccordion">
+                  <div class="accordion-body">
+                    <pre class="bg-light p-3 rounded" id="felizardoTemplate">Assume you are a software engineering
+  researcher conducting a systematic literature review
+  (SLR). Consider the title, abstract, keywords, publication, and date of a
+  primary study.
+
+  Title: ${title}
+  Abstract: ${abstract}
+  Keywords: ${keywords}
+  Publication venue: ${publication}
+  Publication date: ${date}
+
+  Using a 1-7 Likert scale (1 - Strongly disagree, 2 - Disagree, 3 - Somewhat disagree, 4 - Neutral, 5 - Somewhat agree, 6 - Agree, 7 - Strongly agree,), rate your agreement with the following criteria (only number). 
+  If you rate near 7 to a inclusion criteria, the study meet with this criteria and should be included. If you rate near 7 to a exclusion criteria, the study also meet with this criteria and should be excluded. 
+
+  IMPORTANT: Don't be lenient, is better to exclude a paper in this phase. But, remember if it is not possible to evaluate based on the provided information give the score -1.
+
+  ${criteria}
+
+  give me the result in CSV with the following columns: Criteria, Rate
+
+  do not make a file, just a text formatted in csv
+                    </pre>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Prompt 2 -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingHuotala">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseHuotala" aria-expanded="false" aria-controls="collapseHuotala">
+                    <input class="form-check-input me-2" type="radio" name="prompt" value="huotala" />
+                    Huotala (2024)
+                  </button>
+                </h2>
+                <div id="collapseHuotala" class="accordion-collapse collapse" aria-labelledby="headingHuotala"
+                  data-bs-parent="#promptAccordion">
+                  <div class="accordion-body">
+                    <pre class="bg-light p-3 rounded" id="huotalaTemplate">
+
+  Role: You are a software engineering researcher conducting a systematic literature review (SLR).
+
+  Task: Evaluate a primary study using each individual **inclusion/exclusion criterion**
+
+  **Likert scale**
+  - **Value:** An integer from \`1\` to \`7\`
+  - **Interpretation:** Using a 1-7 Likert scale (1 - Strongly disagree,
+  2 - Disagree, 3 - Somewhat disagree, 4 - Neutral, 5 - Somewhat agree, 6 - Agree, 7 - Strongly agree,), rate your agreement with the following criteria (only number). 
+  For inclusion criteria (IC):
+  Higher ratings (6-7) = study meets the criterion → supports inclusion
+  Lower ratings (1-3) = study fails the criterion → supports exclusion
+
+  For exclusion criteria (EC):
+  Higher ratings (6-7) = study meets the criterion → supports exclusion
+  Lower ratings (1-3) = study fails the criterion → supports inclusion
+
+  ### Inclusion and exclusion criteria:
+  ${criteriaText}
+
+  ### Additional instructions:
+  ${instructions}
+
+  ### Primary study:
+  **Title:** 
+  """ 
+  ${title}
+  """
+
+  **Abstract:** 
+  """
+  ${abstract}
+  """
+
+  **Keywords:** 
+  """
+  ${keywords}
+  """
+
+  **Publication venue:** 
+  """
+  ${publication}
+  """
+
+  **Publication date:** 
+  """
+  ${date}
+  """
+
+  give me the result in CSV with the following columns: Criteria, Rate
+
+  do not make a file, just a text formatted in csv
+                    </pre>
+                  </div>
+                </div>
+              </div>
+
+              <!--
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingThode">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseThode" aria-expanded="false" aria-controls="collapseThode">
+                    <input class="form-check-input me-2" type="radio" name="prompt" value="thode" />
+                    Thode (2024)
+                  </button>
+                </h2>
+                <div id="collapseThode" class="accordion-collapse collapse" aria-labelledby="headingThode"
+                  data-bs-parent="#promptAccordion">
+                  <div class="accordion-body">
+                    <pre class="bg-light p-3 rounded" id="thodeTemplate">
+  Perform the task to the best of your ability.
+
+  User Prompt:
+  Assume you are an expert professor in Software Engineering conducting a
+  systematic literature review.
+
+  Your task is to evaluate studies based on specific criteria:
+  Inclusion Criteria (IC): Inclusion criteria from primary candidate study
+  Exclusion Criteria (EC): Exclusion criteria from primary candidate study
+
+  For scoring, use only 1 or 0: Assign a score of 1 for strong alignment with all
+  inclusion criteria. Assign a score of 0 if any inclusion criteria are not satisfied or if
+  any exclusion criteria are met.
+
+  You’ll score studies based on their title, abstracts, keywords, publication venue and date.
+
+  Title: ${title}
+  Abstract: ${abstract}
+  Keywords: ${keywords}
+  Publication venue: ${publication}
+  Publication date: ${date}
+
+  For the response, use the following format: Response Format: Begin with ‘‘Score:
+  X’’ followed by ‘‘Justification:’’ which explains why the study was considered
+  relevant or not.
+                    </pre>
+                  </div>
+                </div>
+              </div>
+              -->
+
+            </div>
+          </div>
+
+          <div class="section-box">
+            <h3 class="section-title">📂 Upload JSON File</h3>
+
+            <div id="dropZone" class="border border-2 border-dashed rounded p-4 text-center bg-white">
+              <p class="mb-2">Arraste e solte o arquivo .bib ou xlsx aqui</p>
+              <p class="text-muted">ou</p>
+              <input type="file" id="jsonFileInput" accept=".json,.xlsx,.xls,.bib" class="d-none">
+              <button type="button" class="btn btn-outline-primary"
+                onclick="document.getElementById('jsonFileInput').click()">Selecionar Arquivo</button>
+              <p id="fileName" class="mt-3 text-success fw-bold"></p>
+            </div>
+          </div>
+
+          <!-- LLM Selection (igual) -->
+          <div class="section-box">
+            <h3 class="section-title">🤖 Language Models</h3>
+            <div class="row g-3 mb-3">
+              <div class="col-md-4">
+                <select class="form-select" id="model1" required>
+                  <option value="">1st Preference</option>
+                  <option>ChatGPT</option>
+                  <option>Gemini</option>
+                  <option>Deepsek</option>
+                  <option>Claude 3</option>
+                  <option>Llama 3</option>
+                  <option>Mistral</option>
+                  <option>Cohere</option>
+                  <option>Perplexity</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <select class="form-select" id="model2" required>
+                  <option value="">2nd Preference</option>
+                  <option>ChatGPT</option>
+                  <option>Gemini</option>
+                  <option>Deepsek</option>
+                  <option>Claude 3</option>
+                  <option>Llama 3</option>
+                  <option>Mistral</option>
+                  <option>Cohere</option>
+                  <option>Perplexity</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <select class="form-select" id="model3" required>
+                  <option value="">3rd Preference</option>
+                  <option>ChatGPT</option>
+                  <option>Gemini</option>
+                  <option>Deepsek</option>
+                  <option>Claude 3</option>
+                  <option>Llama 3</option>
+                  <option>Mistral</option>
+                  <option>Cohere</option>
+                  <option>Perplexity</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="text-end">
+            <button type="button" id="saveBtn" class="btn btn-success">💾 Save</button>
+            <button type="button" id="editBtn" class="btn btn-secondary d-none">✏️ Edit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de erro -->
+  <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="errorModalLabel">Erro</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="errorModalBody">
+          <!-- Mensagem será preenchida dinamicamente -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de sucesso -->
+  <div class="modal fade" id="saveModal" tabindex="-1" aria-labelledby="saveModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="saveModalLabel">Sucesso</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="saveModalBody">
+          <!-- Mensagem será preenchida dinamicamente -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<div id="footer"></div>
+
+
+<script src="../src/JS/my-reviews.js"></script>
+<script>
+  $("#imports").load("../src/components/imports.html");
+  $("#header").load("../src/components/header.html");
+  $("#footer").load("../src/components/footer.html");
+</script>
+
+
+</html>

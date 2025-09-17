@@ -1,0 +1,27 @@
+ html,
+ body {
+     margin: 0;
+     padding: 0;
+     height: 100%;
+     overflow: hidden;
+     /* impede barra de rolagem do navegador */
+     font-family: Arial, sans-serif;
+     background-color: #f8f9fa;
+ }
+
+ #header {
+     height: 60px;
+     /* exemplo, ajuste conforme seu header */
+ }
+
+ .form-wrapper {
+     width: 100%;
+     height: calc(100% - 60px);
+     /* ocupa o restante abaixo do header */
+ }
+
+ .form-wrapper iframe {
+     width: 100%;
+     height: 100%;
+     border: none;
+ }
