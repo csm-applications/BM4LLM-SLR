@@ -141,8 +141,7 @@ let selectedStudiesData = [];
 async function loadDataset() {
   try {
     const studiesJSON = localStorage.getItem("uploadedJsonFile");
-
-    if (!window.studiesJSON) {
+    if (!studiesJSON) {
       const interval = setInterval(() => {
         const modalEl = document.getElementById("customAlertModal");
         if (modalEl) {
